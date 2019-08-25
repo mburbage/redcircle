@@ -9,7 +9,7 @@
 
 ?>
 <section>
-    <?php the_content(); ?>    
+    <?php the_content(); ?>     
 </section>
 	<footer>
 		<?php
