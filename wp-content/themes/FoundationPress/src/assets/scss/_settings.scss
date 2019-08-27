@@ -67,8 +67,8 @@
 // 1. Global
 // ---------
 
-$global-font-size: 100%;
-$global-width: rem-calc(1200);
+$global-font-size: 90%;
+$global-width: rem-calc(1100);
 $global-lineheight: 1.5;
 $foundation-palette: (
   primary: #1779ba,
@@ -151,7 +151,7 @@ $header-styles: (
   ),
   medium: (
     'h1': ('font-size': 48),
-    'h2': ('font-size': 40),
+    'h2': ('font-size': 35),
     'h3': ('font-size': 31),
     'h4': ('font-size': 25),
     'h5': ('font-size': 20),
