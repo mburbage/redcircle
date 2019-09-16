@@ -276,21 +276,32 @@
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/css\/frontend.min.css?ver=2.6.8",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/css\/frontend.min.css?ver=2.6.4",
                         "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/global.css?ver=1566835448",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-160.css?ver=1566936868",
                         "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-24.css?ver=1566833668",
-                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-123.css?ver=1566837233",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-123.css?ver=1566938602",
                         "https:\/\/fonts.googleapis.com\/css?family=Roboto%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRoboto+Slab%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&#038;ver=5.2.2",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/fontawesome.min.css?ver=5.9.0",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/solid.min.css?ver=5.9.0",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/regular.min.css?ver=5.9.0",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/brands.min.css?ver=5.9.0"
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/brands.min.css?ver=5.9.0",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-123.css?ver=1566837233"
                     ]
                 }
             },
             "homepage-full-width": {
                 "include": {
                     "files": [
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-164.css?ver=1566941551",
                         "http:\/\/redcircle\/wp-content\/plugins\/js_composer\/assets\/css\/js_composer.min.css?ver=6.0.1",
                         "http:\/\/fonts.googleapis.com\/css?family=Montserrat:500"
+                    ]
+                }
+            },
+            "single": {
+                "include": {
+                    "files": [
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-1.css?ver=1568563306",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-242.css?ver=1568562570"
                     ]
                 }
             }
@@ -340,7 +351,9 @@
             "single": {
                 "include": {
                     "files": [
-                        "http:\/\/redcircle\/wp-includes\/js\/comment-reply.min.js?ver=5.2.2"
+                        "http:\/\/redcircle\/wp-includes\/js\/comment-reply.min.js?ver=5.2.2",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/lib\/social-share\/social-share.min.js?ver=0.2.17",
+                        "http:\/\/redcircle\/wp-includes\/js\/imagesloaded.min.js?ver=3.2.0"
                     ]
                 }
             }
