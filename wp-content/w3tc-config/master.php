@@ -1,5 +1,5 @@
 <?php exit; ?>{
-    "version": "0.9.7.5",
+    "version": "0.10.1",
     "cluster.messagebus.debug": false,
     "cluster.messagebus.enabled": false,
     "cluster.messagebus.sns.region": "",
@@ -218,6 +218,13 @@
         }
     },
     "stats.enabled": "0",
+    "stats.slot_seconds": 60,
+    "stats.slots_count": 60,
+    "stats.cpu.enabled": false,
+    "stats.access_log.enabled": false,
+    "stats.access_log.filename": "",
+    "stats.access_log.format": "%h %l %u %t \\\"%r\\\" %>s %O \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\"",
+    "stats.access_log.webserver": "apache",
     "minify.configuration_overloaded": false,
     "minify.enabled": "1",
     "minify.auto": "0",
@@ -938,5 +945,9 @@
     "plugin.type": "",
     "fragmentcache": {
         "engine": ""
+    },
+    "pgcache.bad_behavior_path": "",
+    "newrelic": {
+        "monitoring_type": "apm"
     }
 }
