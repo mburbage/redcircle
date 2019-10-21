@@ -1,4 +1,4 @@
-/*! elementor - v2.7.2 - 16-09-2019 */
+/*! elementor - v2.7.4 - 06-10-2019 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -4512,7 +4512,10 @@ function (_elementorModules$fro) {
     key: "onInit",
     value: function onInit() {
       (0, _get2.default)((0, _getPrototypeOf2.default)(BackgroundSlideshow.prototype), "onInit", this).call(this);
-      this.run();
+
+      if (this.getElementSettings('background_slideshow_gallery')) {
+        this.run();
+      }
     }
   }, {
     key: "onDestroy",
@@ -6048,6 +6051,12 @@ function (_elementorModules$fro) {
 
       if (isSingleSlide) {
         swiperOptions.effect = elementSettings.effect;
+
+        if ('fade' === elementSettings.effect) {
+          swiperOptions.fadeEffect = {
+            crossFade: true
+          };
+        }
       } else {
         swiperOptions.slidesPerGroup = +elementSettings.slides_to_scroll || 1;
       }
@@ -6093,7 +6102,7 @@ function (_elementorModules$fro) {
 
       (_get2 = (0, _get3.default)((0, _getPrototypeOf2.default)(ImageCarouselHandler.prototype), "onInit", this)).call.apply(_get2, [this].concat(args));
 
-      if (!this.elements.$carousel.length) {
+      if (!this.elements.$carousel.length || 2 > this.elements.$swiperSlides.length) {
         return;
       }
 
@@ -7385,7 +7394,7 @@ module.exports = elementorModules.ViewModule.extend({
     var self = this,
         classes = self.getSettings('classes'),
         $item = jQuery('<div>', {
-      class: "".concat(classes.item, " ").concat(classes.preventClose)
+      class: classes.item
     }),
         $image = jQuery('<img>', {
       src: imageURL,

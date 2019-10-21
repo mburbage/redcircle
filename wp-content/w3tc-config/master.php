@@ -331,7 +331,7 @@
                 "include": {
                     "files": [
                         "http:\/\/redcircle\/wp-content\/plugins\/google-analytics-for-wordpress\/assets\/js\/frontend.min.js?ver=7.7.1",
-                        "https:\/\/ajax.googleapis.com\/ajax\/libs\/jquery\/3.2.1\/jquery.min.js?ver=3.2.1",
+                        "https:\/\/ajax.googleapis.com\/ajax\/libs\/jquery\/3.4.1\/jquery.min.js?ver=3.4.1",
                         "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/js\/jquery.themepunch.tools.min.js?ver=5.4.8.3",
                         "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/js\/jquery.themepunch.revolution.min.js?ver=5.4.8.3",
                         "http:\/\/redcircle\/wp-content\/themes\/FoundationPress\/dist\/assets\/js\/app.js?ver=2.10.4",
