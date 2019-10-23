@@ -11,6 +11,7 @@
 namespace Fragen\GitHub_Updater;
 
 use Fragen\Singleton;
+use Fragen\GitHub_Updater\Traits\GHU_Trait;
 
 /*
  * Exit if called directly.
@@ -28,7 +29,9 @@ require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
  * This class inherits from Base in order to be able to call the
  * set_defaults function.
  */
-class Rest_Update extends Base {
+class Rest_Update {
+	use GHU_Trait;
+
 	/**
 	 * Holds REST Upgrader Skin.
 	 *
@@ -37,12 +40,27 @@ class Rest_Update extends Base {
 	protected $upgrader_skin;
 
 	/**
+	 * Holds sanitized $_REQUEST.
+	 *
+	 * @var array
+	 */
+	protected static $request;
+
+	/**
+	 * Holds regex pattern for version number.
+	 * Allows for leading 'v'.
+	 *
+	 * @var string
+	 */
+	protected static $version_number_regex = '@(?:v)?[0-9\.]+@i';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct();
 		$this->load_options();
 		$this->upgrader_skin = new Rest_Upgrader_Skin();
+		self::$request       = $this->sanitize( $_REQUEST ); // phpcs:ignore WordPress.Security.NonceVerification
 	}
 
 	/**
@@ -72,7 +90,7 @@ class Rest_Update extends Base {
 			$is_plugin_active = true;
 		}
 
-		$this->get_remote_repo_meta( $plugin );
+		Singleton::get_instance( 'Base', $this )->get_remote_repo_meta( $plugin );
 		$repo_api = Singleton::get_instance( 'API', $this )->get_repo_api( $plugin->git, $plugin );
 
 		$update = [
@@ -125,7 +143,7 @@ class Rest_Update extends Base {
 			throw new \UnexpectedValueException( 'Theme not found or not updatable with GitHub Updater: ' . $theme_slug );
 		}
 
-		$this->get_remote_repo_meta( $theme );
+		Singleton::get_instance( 'Base', $this )->get_remote_repo_meta( $theme );
 		$repo_api = Singleton::get_instance( 'API', $this )->get_repo_api( $theme->git, $theme );
 
 		$update = [
@@ -175,8 +193,8 @@ class Rest_Update extends Base {
 	public function process_request() {
 		$start = microtime( true );
 		try {
-			if ( ! isset( $_REQUEST['key'] ) ||
-				get_site_option( 'github_updater_api_key' ) !== $_REQUEST['key']
+			if ( ! isset( self::$request['key'] ) ||
+				get_site_option( 'github_updater_api_key' ) !== self::$request['key']
 			) {
 				throw new \UnexpectedValueException( 'Bad API key.' );
 			}
@@ -190,23 +208,32 @@ class Rest_Update extends Base {
 			do_action( 'github_updater_pre_rest_process_request' );
 
 			$tag = 'master';
-			if ( isset( $_REQUEST['tag'] ) ) {
-				$tag = $_REQUEST['tag'];
-			} elseif ( isset( $_REQUEST['committish'] ) ) {
-				$tag = $_REQUEST['committish'];
+			if ( isset( self::$request['tag'] ) ) {
+				$tag = self::$request['tag'];
+			} elseif ( isset( self::$request['committish'] ) ) {
+				$tag = self::$request['committish'];
 			}
 
 			$this->get_webhook_source();
+			$override       = isset( self::$request['override'] );
 			$current_branch = $this->get_local_branch();
-			$override       = isset( $_REQUEST['override'] );
-			if ( $tag !== $current_branch && ! $override ) {
+
+			if ( ! ( 0 === preg_match( self::$version_number_regex, $tag ) ) ) {
+				$remote_branch = 'master';
+			}
+			if ( isset( self::$request['branch'] ) ) {
+				$tag = $remote_branch = self::$request['branch'];
+			}
+			$remote_branch  = isset( $remote_branch ) ? $remote_branch : $tag;
+			$current_branch = $override ? $remote_branch : $current_branch;
+			if ( $remote_branch !== $current_branch && ! $override ) {
 				throw new \UnexpectedValueException( 'Webhook tag and current branch are not matching. Consider using `override` query arg.' );
 			}
 
-			if ( isset( $_REQUEST['plugin'] ) ) {
-				$this->update_plugin( $_REQUEST['plugin'], $tag );
-			} elseif ( isset( $_REQUEST['theme'] ) ) {
-				$this->update_theme( $_REQUEST['theme'], $tag );
+			if ( isset( self::$request['plugin'] ) ) {
+				$this->update_plugin( self::$request['plugin'], $tag );
+			} elseif ( isset( self::$request['theme'] ) ) {
+				$this->update_theme( self::$request['theme'], $tag );
 			} else {
 				throw new \UnexpectedValueException( 'No plugin or theme specified for update.' );
 			}
@@ -214,16 +241,29 @@ class Rest_Update extends Base {
 			$http_response = [
 				'success'      => false,
 				'messages'     => $e->getMessage(),
-				'webhook'      => $_GET,
+				'webhook'      => $_GET, // phpcs:ignore WordPress.Security.NonceVerification
 				'elapsed_time' => round( ( microtime( true ) - $start ) * 1000, 2 ) . ' ms',
 			];
 			$this->log_exit( $http_response, 417 );
 		}
 
+		// Only set branch on successful update.
+		if ( ! $this->is_error() ) {
+			$slug    = isset( self::$request['plugin'] ) ? self::$request['plugin'] : false;
+			$slug    = isset( self::$request['theme'] ) ? self::$request['theme'] : $slug;
+			$options = $this->get_class_vars( 'Base', 'options' );
+
+			// Set branch, delete repo cache, and spawn cron.
+			$options[ 'current_branch_' . $slug ] = $current_branch;
+			update_site_option( 'github_updater', $options );
+			delete_site_option( 'ghu-' . md5( $slug ) );
+			wp_cron();
+		}
+
 		$response = [
 			'success'      => true,
 			'messages'     => $this->get_messages(),
-			'webhook'      => $_GET,
+			'webhook'      => $_GET, // phpcs:ignore WordPress.Security.NonceVerification
 			'elapsed_time' => round( ( microtime( true ) - $start ) * 1000, 2 ) . ' ms',
 		];
 
@@ -241,13 +281,13 @@ class Rest_Update extends Base {
 	 */
 	private function get_local_branch() {
 		$repo = false;
-		if ( isset( $_REQUEST['plugin'] ) ) {
+		if ( isset( self::$request['plugin'] ) ) {
 			$repos = Singleton::get_instance( 'Plugin', $this )->get_plugin_configs();
-			$repo  = isset( $repos[ $_REQUEST['plugin'] ] ) ? $repos[ $_REQUEST['plugin'] ] : false;
+			$repo  = isset( $repos[ self::$request['plugin'] ] ) ? $repos[ self::$request['plugin'] ] : false;
 		}
-		if ( isset( $_REQUEST['theme'] ) ) {
+		if ( isset( self::$request['theme'] ) ) {
 			$repos = Singleton::get_instance( 'Theme', $this )->get_theme_configs();
-			$repo  = isset( $repos[ $_REQUEST['theme'] ] ) ? $repos[ $_REQUEST['theme'] ] : false;
+			$repo  = isset( $repos[ self::$request['theme'] ] ) ? $repos[ self::$request['theme'] ] : false;
 		}
 		$current_branch = $repo ?
 			Singleton::get_instance( 'Branch', $this )->get_current_branch( $repo ) :
