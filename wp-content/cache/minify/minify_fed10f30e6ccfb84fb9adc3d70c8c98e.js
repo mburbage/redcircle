@@ -8,20 +8,7 @@
   js.id = id;
   var e = document.getElementsByTagName('script')[0];
   e.parentNode.insertBefore(js, e);
-})('hs-analytics', '//js.hs-analytics.net/analytics/1579312200000/5951833.js');
-
-(function (id, src, attrs) {
-  if (document.getElementById(id)) {
-    return;
-  }
-  var js = document.createElement('script');
-  js.src = src;
-  js.type = 'text/javascript';
-  js.id = id;
-  for (var name in attrs) { if(attrs.hasOwnProperty(name)) { js.setAttribute(name, attrs[name]); } }
-  var e = document.getElementsByTagName('script')[0];
-  e.parentNode.insertBefore(js, e);
-})('CollectedForms-5951833', 'https://js.hscollectedforms.net/collectedforms.js', {"crossorigin":"anonymous","data-leadin-portal-id":5951833,"data-leadin-env":"prod","data-loader":"hs-scriptloader","data-hsjs-portal":5951833,"data-hsjs-env":"prod"});
+})('hs-analytics', '//js.hs-analytics.net/analytics/1579358400000/5951833.js');
 
 (function (id, src, attrs) {
   if (document.getElementById(id)) {
@@ -35,3 +22,16 @@
   var e = document.getElementsByTagName('script')[0];
   e.parentNode.insertBefore(js, e);
 })('hubspot-messages-loader', 'https://js.usemessages.com/conversations-embed.js', {"data-loader":"hs-scriptloader","data-hsjs-portal":5951833,"data-hsjs-env":"prod"});
+
+(function (id, src, attrs) {
+  if (document.getElementById(id)) {
+    return;
+  }
+  var js = document.createElement('script');
+  js.src = src;
+  js.type = 'text/javascript';
+  js.id = id;
+  for (var name in attrs) { if(attrs.hasOwnProperty(name)) { js.setAttribute(name, attrs[name]); } }
+  var e = document.getElementsByTagName('script')[0];
+  e.parentNode.insertBefore(js, e);
+})('CollectedForms-5951833', 'https://js.hscollectedforms.net/collectedforms.js', {"crossorigin":"anonymous","data-leadin-portal-id":5951833,"data-leadin-env":"prod","data-loader":"hs-scriptloader","data-hsjs-portal":5951833,"data-hsjs-env":"prod"});
