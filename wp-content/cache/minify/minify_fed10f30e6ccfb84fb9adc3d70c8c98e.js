@@ -1,37 +1,5 @@
 // HubSpot Script Loader. Please do not block this resource. See more: http://hubs.ly/H0702_H0
 
-(function (id, src) {
-  if (document.getElementById(id)) { return; }
-  var js = document.createElement('script');
-  js.src = src;
-  js.type = 'text/javascript';
-  js.id = id;
-  var e = document.getElementsByTagName('script')[0];
-  e.parentNode.insertBefore(js, e);
-})('hs-analytics', '//js.hs-analytics.net/analytics/1579358400000/5951833.js');
-
-(function (id, src, attrs) {
-  if (document.getElementById(id)) {
-    return;
-  }
-  var js = document.createElement('script');
-  js.src = src;
-  js.type = 'text/javascript';
-  js.id = id;
-  for (var name in attrs) { if(attrs.hasOwnProperty(name)) { js.setAttribute(name, attrs[name]); } }
-  var e = document.getElementsByTagName('script')[0];
-  e.parentNode.insertBefore(js, e);
-})('hubspot-messages-loader', 'https://js.usemessages.com/conversations-embed.js', {"data-loader":"hs-scriptloader","data-hsjs-portal":5951833,"data-hsjs-env":"prod"});
-
-(function (id, src, attrs) {
-  if (document.getElementById(id)) {
-    return;
-  }
-  var js = document.createElement('script');
-  js.src = src;
-  js.type = 'text/javascript';
-  js.id = id;
-  for (var name in attrs) { if(attrs.hasOwnProperty(name)) { js.setAttribute(name, attrs[name]); } }
-  var e = document.getElementsByTagName('script')[0];
-  e.parentNode.insertBefore(js, e);
-})('CollectedForms-5951833', 'https://js.hscollectedforms.net/collectedforms.js', {"crossorigin":"anonymous","data-leadin-portal-id":5951833,"data-leadin-env":"prod","data-loader":"hs-scriptloader","data-hsjs-portal":5951833,"data-hsjs-env":"prod"});
+!function(t,e,r){if(!document.getElementById(t)){var n=document.createElement("script");for(var a in n.src="https://js.usemessages.com/conversations-embed.js",n.type="text/javascript",n.id=t,r)r.hasOwnProperty(a)&&n.setAttribute(a,r[a]);var i=document.getElementsByTagName("script")[0];i.parentNode.insertBefore(n,i)}}("hubspot-messages-loader",0,{"data-loader":"hs-scriptloader","data-hsjs-portal":5951833,"data-hsjs-env":"prod"});
+!function(t,e,r){if(!document.getElementById(t)){var n=document.createElement("script");for(var a in n.src="https://js.hscollectedforms.net/collectedforms.js",n.type="text/javascript",n.id=t,r)r.hasOwnProperty(a)&&n.setAttribute(a,r[a]);var i=document.getElementsByTagName("script")[0];i.parentNode.insertBefore(n,i)}}("CollectedForms-5951833",0,{"crossorigin":"anonymous","data-leadin-portal-id":5951833,"data-leadin-env":"prod","data-loader":"hs-scriptloader","data-hsjs-portal":5951833,"data-hsjs-env":"prod"});
+!function(e,t){if(!document.getElementById(e)){var c=document.createElement("script");c.src="//js.hs-analytics.net/analytics/1581804600000/5951833.js",c.type="text/javascript",c.id=e;var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(c,n)}}("hs-analytics");

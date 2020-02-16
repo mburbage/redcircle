@@ -20,7 +20,7 @@
 </head>
 
 <body <?php body_class(); ?>>
-Here
+
 	<?php if (get_theme_mod('wpt_mobile_menu_layout') === 'offcanvas') : ?>
 		<?php get_template_part('template-parts/mobile-off-canvas'); ?>
 	<?php endif; ?>
