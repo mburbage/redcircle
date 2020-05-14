@@ -12,8 +12,6 @@ class Extension_FragmentCache_Plugin_Admin {
 	 */
 	static public function w3tc_extensions( $extensions, $config ) {
 		$requirements = array();
-		if ( !Util_Environment::is_w3tc_pro( $config ) )
-			$requirements[] = 'Available after <a href="#" class="button-buy-plugin">upgrade</a>';
 
 		$extensions['fragmentcache'] = array (
 			'name' => 'Fragment Cache',
@@ -22,6 +20,7 @@ class Extension_FragmentCache_Plugin_Admin {
 			'author_uri' => 'https://www.w3-edge.com/',
 			'extension_uri' => 'https://www.w3-edge.com/',
 			'extension_id' => 'fragmentcache',
+			'pro_feature' => true,
 			'settings_exists' => true,
 			'version' => '1.0',
 			'enabled' => empty( $requirements ),
@@ -71,8 +70,9 @@ class Extension_FragmentCache_Plugin_Admin {
 
 
 	public function w3tc_objectcache_addin_required( $addin_required ) {
-		if ( $this->_config->is_extension_active_frontend( 'fragmentcache' ) )
+		if ( $this->_config->is_extension_active_frontend( 'fragmentcache' ) ) {
 			return true;
+		}
 
 		return $addin_required;
 	}
@@ -111,7 +111,7 @@ class Extension_FragmentCache_Plugin_Admin {
 				'id' => 'w3tc_flush_fragmentcache',
 				'parent' => 'w3tc_flush',
 				'title' => __( 'Fragment Cache: All Fragments', 'w3-total-cache' ),
-				'href' => wp_nonce_url( network_admin_url(
+				'href' => wp_nonce_url( admin_url(
 						'admin.php?page=w3tc_dashboard&amp;w3tc_flush_fragmentcache' ), 'w3tc' )
 			);
 		}
@@ -142,6 +142,10 @@ class Extension_FragmentCache_Plugin_Admin {
 
 
 	public function w3tc_usage_statistics_summary_from_history( $summary, $history ) {
+		if ( !$this->_config->is_extension_active_frontend( 'fragmentcache' ) ) {
+			return $summary;
+		}
+
 		// memcached servers
 		$c = Dispatcher::config();
 		if ( $c->get_string( array( 'fragmentcache', 'engine' ) ) == 'memcached' ) {

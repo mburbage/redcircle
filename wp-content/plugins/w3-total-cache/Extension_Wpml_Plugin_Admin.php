@@ -42,8 +42,6 @@ class Extension_Wpml_Plugin_Admin {
 			$requirements[] = 'Ensure "WPML" plugin compatibility, which is not currently active.';
 		if ( empty( $requirements ) && !Util_Environment::is_w3tc_pro( $config ) ) {
 			$enabled = false;
-			$requirements[] = 'Available after <a href="#" class="button-buy-plugin">upgrade</a>';
-			$disabled_message = '<a href="#" class="button-buy-plugin">upgrade</a>';
 		}
 
 		$extensions['wpml'] = array(
@@ -54,6 +52,7 @@ class Extension_Wpml_Plugin_Admin {
 			'author_uri' => 'https://www.w3-edge.com/',
 			'extension_uri' => 'https://www.w3-edge.com/',
 			'extension_id' => 'wpml',
+			'pro_feature' => true,
 			'settings_exists' => false,
 			'version' => '0.1',
 			'enabled' => $enabled,
@@ -108,7 +107,7 @@ class Extension_Wpml_Plugin_Admin {
 
 		$config = Dispatcher::config();
 		if ( !Util_Environment::is_w3tc_pro( $config ) )
-			$activate_text = 'Available after <a href="#" class="button-buy-plugin">upgrade</a>. ';
+			$activate_text = 'Available after <a href="#" class="button-buy-plugin" data-src="wpml_requirements3">upgrade</a>. ';
 		else {
 			$activate_text = sprintf( '<a class="button" href="%s">Click here</a> to try it. ',
 				Util_Ui::url( array( 'w3tc_extensions_activate' => $extension_id ) ) );
