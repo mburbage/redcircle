@@ -158,7 +158,7 @@ class Minify_HTML {
 
 		// remove trailing slash from void elements
 		$this->_html = preg_replace(
-			'~<(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)([^>]*?)\\s*[/]?>~i'
+			'~<(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)(([^\'">]|\"[^\"]*\"|\'[^\']*\'|)*?)\\s*[/]?>~i'
 			,'<$1$2>'
 			,$this->_html);
 
@@ -353,7 +353,7 @@ class Minify_HTML {
 
 	public function _removeAttributeQuotesCallback( $m ) {
 		// empty tag values like <div data-value=""> to <div data-value
-		if ( empty( $m[3] ) ) {
+		if ( $m[3] === '' ) {
 			return $m[1] . $m[4];
 		}
 
