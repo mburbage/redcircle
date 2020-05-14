@@ -1,0 +1,88 @@
+#breadcrumbs{
+	font-family: "Roboto";
+}
+.genPrice .progress .progress-bar-price {
+  color: rgb(237, 32, 36) !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  border-width: 2px !important;
+  border-color: rgb(237, 32, 36) !important;
+  border-style: solid !important;
+}
+.stepTitle,
+.lfb_stepDescription {
+  color: #afafaf !important;
+}
+.lfb_btnContainer {
+  padding-top: 20px !important;
+}
+.lfb_btnContainer a {
+  background-color: rgb(115, 115, 115) !important;
+  color: rgb(250, 250, 250) !important;
+  margin-top: 0 !important;
+}
+#lfb_bootstraped.lfb_bootstraped #estimation_popup.wpe_bootstraped .row {
+  max-width: 710px;
+  margin: 0 auto;
+  /* margin-left: 0; */
+  /* margin-right: 0; */
+  position: relative;
+  /* justify-content: left; */
+  text-align: left;
+}
+.itemBloc .fa-check:before {
+  margin-left: 6px !important;
+  background: white;
+  border-radius: 50%;
+  border: 5px solid white;
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  box-shadow: 0 0 5px #000;
+  color: green;
+  font-size: 1.2em;
+  display: none;
+}
+.itemBloc a {
+  width: 200px;
+}
+.itemBloc .checked .fa-check:before {
+  display: inline;
+}
+#estimation_popup.wpe_bootstraped .lfb_stepDescription {
+  opacity: 0;
+  position: absolute;
+  margin: 0 auto;
+  top: 20px;
+  max-width: 750px;
+  text-align: left;
+  margin-bottom: 18px;
+  padding-left: 18px;
+  padding-right: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.linkPrevious {
+  color: #bdc3c7 !important;
+}
+.btn-next {
+  border-style: solid !important;
+  border-width: 2px !important;
+  border-color: rgb(237, 32, 36) !important;
+  box-shadow: none !important;
+  color: rgb(237, 32, 36) !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+}
+
+.itemBloc.col-md-2.lfb_item.lfb_itemContainer_273,
+.itemBloc.col-md-2.lfb_item.lfb_itemContainer_271,
+.itemBloc.col-md-2.lfb_item.lfb_itemContainer_263,
+.itemBloc.col-md-2.lfb_item.lfb_itemContainer_262 {
+  width: 500px !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
