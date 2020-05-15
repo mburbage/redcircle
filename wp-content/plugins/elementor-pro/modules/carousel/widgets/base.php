@@ -224,19 +224,6 @@ abstract class Base extends Base_Widget {
 		);
 
 		$this->add_control(
-			'pause_on_hover',
-			[
-				'label' => __( 'Pause on Hover', 'elementor-pro' ),
-				'type' => Controls_Manager::SWITCHER,
-				'default' => 'yes',
-				'condition' => [
-					'autoplay' => 'yes',
-				],
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
 			'pause_on_interaction',
 			[
 				'label' => __( 'Pause on Interaction', 'elementor-pro' ),
@@ -472,7 +459,7 @@ abstract class Base extends Base_Widget {
 
 	protected function print_slider( array $settings = null ) {
 		if ( null === $settings ) {
-			$settings = $this->get_settings_for_display();
+			$settings = $this->get_active_settings();
 		}
 
 		$default_settings = [

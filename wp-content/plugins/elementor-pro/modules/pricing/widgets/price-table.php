@@ -2,12 +2,13 @@
 namespace ElementorPro\Modules\Pricing\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Repeater;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
 use ElementorPro\Base\Base_Widget;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -332,6 +333,7 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor-pro' ),
@@ -365,8 +367,8 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__header' => 'background-color: {{VALUE}}',
@@ -411,7 +413,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'heading_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__heading',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -440,7 +442,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'sub_heading_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__subheading',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
 			]
 		);
 
@@ -495,7 +497,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'price_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__price',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -536,6 +538,7 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'default' => 'before',
 				'options' => [
 					'before' => [
@@ -555,6 +558,7 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Vertical Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'top' => [
 						'title' => __( 'Top', 'elementor-pro' ),
@@ -615,6 +619,7 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Vertical Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'top' => [
 						'title' => __( 'Top', 'elementor-pro' ),
@@ -660,8 +665,8 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__original-price' => 'color: {{VALUE}}',
@@ -678,7 +683,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'original_price_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__original-price',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 				'condition' => [
 					'sale' => 'yes',
 					'original_price!' => '',
@@ -691,6 +696,7 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Vertical Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'top' => [
 						'title' => __( 'Top', 'elementor-pro' ),
@@ -739,8 +745,8 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__period' => 'color: {{VALUE}}',
@@ -756,7 +762,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'period_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__period',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_2,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_2,
 				'condition' => [
 					'period!' => '',
 				],
@@ -821,8 +827,8 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 				'separator' => 'before',
 				'selectors' => [
@@ -836,7 +842,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'features_list_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__features-list li',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -845,6 +851,7 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Alignment', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor-pro' ),
@@ -920,8 +927,8 @@ class Price_Table extends Base_Widget {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 				'condition' => [
 					'list_divider' => 'yes',
@@ -1080,6 +1087,9 @@ class Price_Table extends Base_Widget {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__button' => 'color: {{VALUE}};',
 				],
+				'condition' => [
+					'button_text!' => '',
+				],
 			]
 		);
 
@@ -1087,8 +1097,11 @@ class Price_Table extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'button_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .elementor-price-table__button',
+				'condition' => [
+					'button_text!' => '',
+				],
 			]
 		);
 
@@ -1098,11 +1111,14 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_4,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__button' => 'background-color: {{VALUE}};',
+				],
+				'condition' => [
+					'button_text!' => '',
 				],
 			]
 		);
@@ -1111,6 +1127,9 @@ class Price_Table extends Base_Widget {
 			Group_Control_Border::get_type(), [
 				'name' => 'button_border',
 				'selector' => '{{WRAPPER}} .elementor-price-table__button',
+				'condition' => [
+					'button_text!' => '',
+				],
 				'separator' => 'before',
 			]
 		);
@@ -1124,6 +1143,9 @@ class Price_Table extends Base_Widget {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
+				'condition' => [
+					'button_text!' => '',
+				],
 			]
 		);
 
@@ -1135,6 +1157,9 @@ class Price_Table extends Base_Widget {
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'condition' => [
+					'button_text!' => '',
 				],
 			]
 		);
@@ -1159,6 +1184,9 @@ class Price_Table extends Base_Widget {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__button:hover' => 'color: {{VALUE}};',
 				],
+				'condition' => [
+					'button_text!' => '',
+				],
 			]
 		);
 
@@ -1169,6 +1197,9 @@ class Price_Table extends Base_Widget {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__button:hover' => 'background-color: {{VALUE}};',
+				],
+				'condition' => [
+					'button_text!' => '',
 				],
 			]
 		);
@@ -1181,6 +1212,9 @@ class Price_Table extends Base_Widget {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__button:hover' => 'border-color: {{VALUE}};',
 				],
+				'condition' => [
+					'button_text!' => '',
+				],
 			]
 		);
 
@@ -1189,6 +1223,9 @@ class Price_Table extends Base_Widget {
 			[
 				'label' => __( 'Animation', 'elementor-pro' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
+				'condition' => [
+					'button_text!' => '',
+				],
 			]
 		);
 
@@ -1214,8 +1251,8 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__additional_info' => 'color: {{VALUE}}',
@@ -1231,7 +1268,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'additional_info_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__additional_info',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 				'condition' => [
 					'footer_additional_info!' => '',
 				],
@@ -1280,8 +1317,8 @@ class Price_Table extends Base_Widget {
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_4,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-price-table__ribbon-inner' => 'background-color: {{VALUE}}',
@@ -1326,7 +1363,7 @@ class Price_Table extends Base_Widget {
 			[
 				'name' => 'ribbon_typography',
 				'selector' => '{{WRAPPER}} .elementor-price-table__ribbon-inner',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 			]
 		);
 
@@ -1399,7 +1436,15 @@ class Price_Table extends Base_Widget {
 		] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_link_attributes( 'button_text', $settings['link'] );
+			$this->add_render_attribute( 'button_text', 'href', $settings['link']['url'] );
+
+			if ( ! empty( $settings['link']['is_external'] ) ) {
+				$this->add_render_attribute( 'button_text', 'target', '_blank' );
+			}
+
+			if ( $settings['link']['nofollow'] ) {
+				$this->add_render_attribute( 'button_text', 'rel', 'nofollow' );
+			}
 		}
 
 		if ( ! empty( $settings['button_hover_animation'] ) ) {
@@ -1533,15 +1578,7 @@ class Price_Table extends Base_Widget {
 		endif;
 	}
 
-	/**
-	 * Render Price Table widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 2.9.0
-	 * @access protected
-	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<#
 			var symbols = {

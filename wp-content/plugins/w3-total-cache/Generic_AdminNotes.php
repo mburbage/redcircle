@@ -85,12 +85,12 @@ class Generic_AdminNotes {
 				Util_Ui::button_link( __( 'disable', 'w3-total-cache' ),
 					Util_Ui::url( array(
 							'w3tc_config_preview_disable' => 'y' ) ) ) ) .
-				'<p class="description">'.
+				'<br /><span class="description">'.
 				sprintf(
 				__( 'To preview any changed settings (without deploying): %s',
 					'w3-total-cache' ),
 				Util_Ui::preview_link() ).
-				'</p>';
+				'</span>';
 		}
 
 		/**

@@ -425,9 +425,6 @@ class ObjectCache_WpObjectCache_Regular {
 		if ( $this->_debug || $this->stats_enabled ) {
 			$time_start = Util_Debug::microtime();
 		}
-		if ( $this->_config->get_boolean( 'objectcache.debug_purge' ) ) {
-			Util_Debug::log_purge( 'objectcache', 'flush', $reason );
-		}
 
 		$this->cache = array();
 

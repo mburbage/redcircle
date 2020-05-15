@@ -2,14 +2,14 @@
 namespace ElementorPro\Modules\Woocommerce\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Typography;
+use Elementor\Scheme_Color;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Product_Meta extends Base_Widget {
+class Product_Meta extends Widget_Base {
 
 	public function get_name() {
 		return 'woocommerce-product-meta';
@@ -51,6 +51,7 @@ class Product_Meta extends Base_Widget {
 			[
 				'label' => __( 'View', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
+				'label_block' => false,
 				'default' => 'inline',
 				'options' => [
 					'table' => __( 'Table', 'elementor-pro' ),
@@ -198,8 +199,8 @@ class Product_Meta extends Base_Widget {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 				'condition' => [
 					'divider' => 'yes',

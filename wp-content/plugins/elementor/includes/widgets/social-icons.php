@@ -94,6 +94,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'label' => __( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'social',
+				'label_block' => true,
 				'default' => [
 					'value' => 'fab fa-wordpress',
 					'library' => 'fa-brands',
@@ -117,13 +118,13 @@ class Widget_Social_Icons extends Widget_Base {
 						'github',
 						'gitlab',
 						'globe',
+						'google-plus',
 						'houzz',
 						'instagram',
 						'jsfiddle',
 						'linkedin',
 						'medium',
 						'meetup',
-						'mix',
 						'mixcloud',
 						'odnoklassniki',
 						'pinterest',
@@ -137,6 +138,7 @@ class Widget_Social_Icons extends Widget_Base {
 						'spotify',
 						'stack-overflow',
 						'steam',
+						'stumbleupon',
 						'telegram',
 						'thumb-tack',
 						'tripadvisor',
@@ -169,6 +171,7 @@ class Widget_Social_Icons extends Widget_Base {
 			[
 				'label' => __( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
+				'label_block' => true,
 				'default' => [
 					'is_external' => 'true',
 				],
@@ -242,7 +245,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social_icon' => [
-							'value' => 'fab fa-youtube',
+							'value' => 'fab fa-google-plus',
 							'library' => 'fa-brands',
 						],
 					],
@@ -554,10 +557,12 @@ class Widget_Social_Icons extends Widget_Base {
 					}
 				}
 				if ( 'svg' === $item['social_icon']['library'] ) {
-					$social = get_post_meta( $item['social_icon']['value']['id'], '_wp_attachment_image_alt', true );
+					$social = '';
 				}
 
 				$link_key = 'link_' . $index;
+
+				$this->add_render_attribute( $link_key, 'href', $item['link']['url'] );
 
 				$this->add_render_attribute( $link_key, 'class', [
 					'elementor-icon',
@@ -566,7 +571,13 @@ class Widget_Social_Icons extends Widget_Base {
 					'elementor-repeater-item-' . $item['_id'],
 				] );
 
-				$this->add_link_attributes( $link_key, $item['link'] );
+				if ( $item['link']['is_external'] ) {
+					$this->add_render_attribute( $link_key, 'target', '_blank' );
+				}
+
+				if ( $item['link']['nofollow'] ) {
+					$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
+				}
 
 				?>
 				<a <?php echo $this->get_render_attribute_string( $link_key ); ?>>
@@ -588,10 +599,10 @@ class Widget_Social_Icons extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 2.9.0
+	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<# var iconsHTML = {}; #>
 		<div class="elementor-social-icons-wrapper">

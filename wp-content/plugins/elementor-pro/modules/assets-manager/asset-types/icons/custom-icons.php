@@ -363,7 +363,7 @@ class Custom_Icons extends  Assets_Base {
 
 	public static function get_custom_icons_config() {
 		$config = get_option( self::OPTION_NAME, false );
-		if ( false === $config ) {
+		if ( ! $config ) {
 			$icons = new \WP_Query( [
 				'post_type' => Icons_Manager::CPT,
 				'posts_per_page' => -1,

@@ -41,10 +41,6 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
-	'dbcache.debug_purge' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
 	'dbcache.enabled' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -192,7 +188,6 @@ $keys = array(
 			'loading="eager"',
 			'no-lazy',
 			'rev-slidebg',
-			'skip-lazy',
 			'soliloquy-image',
 			'swatch-img',
 			'w3-total-cache',
@@ -214,10 +209,6 @@ $keys = array(
 		'default' => false
 	),
 	'objectcache.debug' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
-	'objectcache.debug_purge' => array(
 		'type' => 'boolean',
 		'default' => false
 	),
@@ -331,10 +322,6 @@ $keys = array(
 		'default' => 1800
 	),
 	'pgcache.debug' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
-	'pgcache.debug_purge' => array(
 		'type' => 'boolean',
 		'default' => false
 	),
@@ -2007,14 +1994,7 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
-	'browsercache.security.fp' => array(
-		'type' => 'boolean',
-		'default' => false
-	),
-	'browsercache.security.fp.values' => array(
-		'type' => 'array',
-		'default' => array()
-	),
+
 
 
 	'mobile.configuration_overloaded' => array(
@@ -2287,6 +2267,10 @@ $keys = array(
 	),
 
 
+	'common.support' => array(
+		'type' => 'string',
+		'default' => ''
+	),
 	'common.track_usage' => array(
 		'type' => 'boolean',
 		'default' => false
@@ -2388,10 +2372,6 @@ $keys = array(
 		)
 	),
 	'extensions.active_frontend' => array(
-		'type' => 'array',
-		'default' => array()
-	),
-	'extensions.active_dropin' => array(
 		'type' => 'array',
 		'default' => array()
 	),

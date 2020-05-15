@@ -2,10 +2,11 @@
 namespace ElementorPro\Modules\ThemeElements\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -120,6 +121,7 @@ class Search_Form extends Base {
 			[
 				'label' => __( 'Icon', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'default' => 'search',
 				'options' => [
 					'search' => [
@@ -178,6 +180,7 @@ class Search_Form extends Base {
 			[
 				'label' => __( 'Alignment', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'default' => 'center',
 				'options' => [
 					'left' => [
@@ -269,7 +272,7 @@ class Search_Form extends Base {
 			[
 				'name' => 'input_typography',
 				'selector' => '{{WRAPPER}} input[type="search"].elementor-search-form__input',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -288,8 +291,8 @@ class Search_Form extends Base {
 				'label' => __( 'Text Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-search-form__input,
@@ -467,7 +470,7 @@ class Search_Form extends Base {
 			[
 				'name' => 'button_typography',
 				'selector' => '{{WRAPPER}} .elementor-search-form__submit',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 				'condition' => [
 					'button_type' => 'text',
 				],
@@ -500,8 +503,8 @@ class Search_Form extends Base {
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-search-form__submit' => 'background-color: {{VALUE}}',
@@ -560,6 +563,7 @@ class Search_Form extends Base {
 				],
 				'condition' => [
 					'button_type' => 'icon',
+					'skin!' => 'full_screen',
 				],
 				'separator' => 'before',
 			]
@@ -579,6 +583,9 @@ class Search_Form extends Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-search-form__submit' => 'min-width: calc( {{SIZE}} * {{size.SIZE}}{{size.UNIT}} )',
+				],
+				'condition' => [
+					'skin' => 'classic',
 				],
 			]
 		);
@@ -669,6 +676,9 @@ class Search_Form extends Base {
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-search-form__toggle i:before' => 'font-size: calc({{SIZE}}em / 100)',
+				],
+				'condition' => [
+					'skin' => 'full_screen',
 				],
 				'separator' => 'before',
 			]
@@ -779,15 +789,7 @@ class Search_Form extends Base {
 		<?php
 	}
 
-	/**
-	 * Render Search Form widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 2.9.0
-	 * @access protected
-	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<#
 			var iconClass = 'fa fas fa-search';

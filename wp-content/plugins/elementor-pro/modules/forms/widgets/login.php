@@ -2,9 +2,10 @@
 namespace ElementorPro\Modules\Forms\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
 use ElementorPro\Base\Base_Widget;
 use ElementorPro\Plugin;
 
@@ -152,7 +153,7 @@ class Login extends Base_Widget {
 			[
 				'type' => Controls_Manager::URL,
 				'show_label' => false,
-				'options' => false,
+				'show_external' => false,
 				'separator' => false,
 				'placeholder' => __( 'https://your-link.com', 'elementor-pro' ),
 				'description' => __( 'Note: Because of security reasons, you can ONLY use your current domain here.', 'elementor-pro' ),
@@ -178,7 +179,7 @@ class Login extends Base_Widget {
 			[
 				'type' => Controls_Manager::URL,
 				'show_label' => false,
-				'options' => false,
+				'show_external' => false,
 				'separator' => false,
 				'placeholder' => __( 'https://your-link.com', 'elementor-pro' ),
 				'description' => __( 'Note: Because of security reasons, you can ONLY use your current domain here.', 'elementor-pro' ),
@@ -239,6 +240,9 @@ class Login extends Base_Widget {
 			[
 				'label' => __( 'Custom Label', 'elementor-pro' ),
 				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'show_labels' => 'yes',
+				],
 			]
 		);
 
@@ -262,6 +266,7 @@ class Login extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( ' Username or Email Address', 'elementor-pro' ),
 				'condition' => [
+					'show_labels' => 'yes',
 					'custom_labels' => 'yes',
 				],
 			]
@@ -287,6 +292,7 @@ class Login extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Password', 'elementor-pro' ),
 				'condition' => [
+					'show_labels' => 'yes',
 					'custom_labels' => 'yes',
 				],
 			]
@@ -332,8 +338,8 @@ class Login extends Base_Widget {
 					'{{WRAPPER}} .elementor-field-group > a' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 			]
 		);
@@ -347,8 +353,8 @@ class Login extends Base_Widget {
 					'{{WRAPPER}} .elementor-field-group > a:hover' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_4,
 				],
 			]
 		);
@@ -396,8 +402,8 @@ class Login extends Base_Widget {
 					'{{WRAPPER}} .elementor-form-fields-wrapper label' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 			]
 		);
@@ -407,7 +413,7 @@ class Login extends Base_Widget {
 			[
 				'name' => 'label_typography',
 				'selector' => '{{WRAPPER}} .elementor-form-fields-wrapper label',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -430,8 +436,8 @@ class Login extends Base_Widget {
 					'{{WRAPPER}} .elementor-field-group .elementor-field' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 			]
 		);
@@ -441,7 +447,7 @@ class Login extends Base_Widget {
 			[
 				'name' => 'field_typography',
 				'selector' => '{{WRAPPER}} .elementor-field-group .elementor-field, {{WRAPPER}} .elementor-field-subgroup label',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -535,7 +541,7 @@ class Login extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'button_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 				'selector' => '{{WRAPPER}} .elementor-button',
 			]
 		);
@@ -546,8 +552,8 @@ class Login extends Base_Widget {
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_4,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
@@ -663,8 +669,8 @@ class Login extends Base_Widget {
 					'{{WRAPPER}} .elementor-widget-container .elementor-login__logged-in-message' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 			]
 		);
@@ -674,7 +680,7 @@ class Login extends Base_Widget {
 			[
 				'name' => 'message_typography',
 				'selector' => '{{WRAPPER}} .elementor-widget-container .elementor-login__logged-in-message',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -831,7 +837,7 @@ class Login extends Base_Widget {
 						</label>
 					</div>
 				<?php endif; ?>
-
+				
 				<div <?php echo $this->get_render_attribute_string( 'submit-group' ); ?>>
 					<button type="submit" <?php echo $this->get_render_attribute_string( 'button' ); ?>>
 							<?php if ( ! empty( $settings['button_text'] ) ) : ?>
@@ -867,15 +873,7 @@ class Login extends Base_Widget {
 		<?php
 	}
 
-	/**
-	 * Render Login Form output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 2.9.0
-	 * @access protected
-	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<div class="elementor-login elementor-form">
 			<div class="elementor-form-fields-wrapper">

@@ -2,10 +2,12 @@
 namespace ElementorPro\Modules\Carousel\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Repeater;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -172,7 +174,7 @@ class Reviews extends Base {
 			[
 				'name' => 'name_typography',
 				'selector' => '{{WRAPPER}} .elementor-testimonial__header, {{WRAPPER}} .elementor-testimonial__name',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -229,7 +231,7 @@ class Reviews extends Base {
 			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-testimonial__text',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -376,6 +378,7 @@ class Reviews extends Base {
 			[
 				'label' => __( 'Unmarked Style', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'solid' => [
 						'title' => __( 'Solid', 'elementor-pro' ),
@@ -529,6 +532,7 @@ class Reviews extends Base {
 				'label' => __( 'Icon', 'elementor-pro' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'social_icon',
+				'label_block' => true,
 				'default' => [
 					'value' => 'fab fa-twitter',
 					'library' => 'fa-brands',
@@ -560,7 +564,6 @@ class Reviews extends Base {
 						'linkedin',
 						'medium',
 						'meetup',
-						'mix',
 						'mixcloud',
 						'odnoklassniki',
 						'pinterest',
@@ -573,6 +576,7 @@ class Reviews extends Base {
 						'spotify',
 						'stack-overflow',
 						'steam',
+						'stumbleupon',
 						'telegram',
 						'tripadvisor',
 						'tumblr',
@@ -776,7 +780,15 @@ class Reviews extends Base {
 				$this->add_render_attribute( $header_element, 'class', 'elementor-testimonial__header' );
 
 				if ( ! empty( $link_url ) ) {
-					$this->add_link_attributes( $header_element, $slide['link'] );
+					$this->add_render_attribute( $header_element, 'href', $link_url );
+
+					if ( $slide['link']['is_external'] ) {
+						$this->add_render_attribute( $header_element, 'target', '_blank' );
+					}
+
+					if ( ! empty( $slide['link']['nofollow'] ) ) {
+						$this->add_render_attribute( $header_element, 'rel', 'nofollow' );
+					}
 				}
 				?>
 				<<?php echo $header_tag; ?> <?php echo $this->get_render_attribute_string( $header_element ); ?>>

@@ -2,16 +2,17 @@
 namespace ElementorPro\Modules\AnimatedHeadline\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Typography;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
+use Elementor\Widget_Base;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
-use ElementorPro\Base\Base_Widget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Animated_Headline extends Base_Widget {
+class Animated_Headline extends Widget_Base {
 
 	public function get_name() {
 		return 'animated-headline';
@@ -23,6 +24,10 @@ class Animated_Headline extends Base_Widget {
 
 	public function get_icon() {
 		return 'eicon-animated-headline';
+	}
+
+	public function get_categories() {
+		return [ 'pro-elements' ];
 	}
 
 	public function get_keywords() {
@@ -184,6 +189,7 @@ class Animated_Headline extends Base_Widget {
 			[
 				'label' => __( 'Alignment', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor-pro' ),
@@ -244,8 +250,8 @@ class Animated_Headline extends Base_Widget {
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_4,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-headline-dynamic-wrapper path' => 'stroke: {{VALUE}}',
@@ -309,8 +315,8 @@ class Animated_Headline extends Base_Widget {
 				'label' => __( 'Text Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-headline-plain-text' => 'color: {{VALUE}}',
@@ -323,7 +329,7 @@ class Animated_Headline extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .elementor-headline',
 			]
 		);
@@ -343,8 +349,8 @@ class Animated_Headline extends Base_Widget {
 				'label' => __( 'Text Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-headline-dynamic-text' => 'color: {{VALUE}}',
@@ -356,7 +362,7 @@ class Animated_Headline extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'words_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .elementor-headline-dynamic-text',
 				'exclude' => [ 'font_size' ],
 			]
@@ -383,9 +389,17 @@ class Animated_Headline extends Base_Widget {
 		}
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_link_attributes( 'url', $settings['link'] );
+			$this->add_render_attribute( 'url', 'href', $settings['link']['url'] );
 
-			echo '<a ' . $this->get_render_attribute_string( 'url' ) . '>';
+			if ( $settings['link']['is_external'] ) {
+				$this->add_render_attribute( 'url', 'target', '_blank' );
+			}
+
+			if ( ! empty( $settings['link']['nofollow'] ) ) {
+				$this->add_render_attribute( 'url', 'rel', 'nofollow' );
+			}
+
+			echo '<a ' . $this->get_render_attribute_string( 'url' );
 		}
 
 		?>
@@ -405,15 +419,7 @@ class Animated_Headline extends Base_Widget {
 		}
 	}
 
-	/**
-	 * Render Animated Headline widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 2.9.0
-	 * @access protected
-	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<#
 		var headlineClasses = 'elementor-headline',
@@ -430,7 +436,7 @@ class Animated_Headline extends Base_Widget {
 		}
 
 		if ( settings.link.url ) { #>
-			<a href="#">
+			<a htef="#">
 		<# } #>
 				<{{{ tag }}} class="{{{ headlineClasses }}}">
 					<# if ( settings.before_text ) { #>
@@ -446,7 +452,7 @@ class Animated_Headline extends Base_Widget {
 					<# } #>
 				</{{{ tag }}}>
 		<# if ( settings.link.url ) { #>
-			</a>
+			<a htef="#">
 		<# } #>
 		<?php
 	}

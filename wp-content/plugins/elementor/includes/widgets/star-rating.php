@@ -4,9 +4,6 @@ namespace Elementor;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-use Elementor\Core\Schemes;
-
 /**
  * Elementor star rating widget.
  *
@@ -137,6 +134,7 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'label' => __( 'Unmarked Style', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'solid' => [
 						'title' => __( 'Solid', 'elementor' ),
@@ -212,8 +210,8 @@ class Widget_Star_Rating extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-star-rating__title' => 'color: {{VALUE}}',
@@ -226,7 +224,7 @@ class Widget_Star_Rating extends Widget_Base {
 			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -404,10 +402,10 @@ class Widget_Star_Rating extends Widget_Base {
 	}
 
 	/**
-	 * @since 2.9.0
+	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<#
 			var getRating = function() {

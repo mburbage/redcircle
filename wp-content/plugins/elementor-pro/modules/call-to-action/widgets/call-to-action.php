@@ -2,13 +2,14 @@
 namespace ElementorPro\Modules\CallToAction\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
 use Elementor\Utils;
 use ElementorPro\Base\Base_Widget;
 
@@ -62,6 +63,7 @@ class Call_To_Action extends Base_Widget {
 			[
 				'label' => __( 'Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor-pro' ),
@@ -124,6 +126,7 @@ class Call_To_Action extends Base_Widget {
 			[
 				'label' => __( 'Graphic Element', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'none' => [
 						'title' => __( 'None', 'elementor-pro' ),
@@ -340,6 +343,7 @@ class Call_To_Action extends Base_Widget {
 			[
 				'label' => __( 'Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor-pro' ),
@@ -393,6 +397,7 @@ class Call_To_Action extends Base_Widget {
 			[
 				'label' => __( 'Alignment', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'left' => [
 						'title' => __( 'Left', 'elementor-pro' ),
@@ -419,6 +424,7 @@ class Call_To_Action extends Base_Widget {
 			[
 				'label' => __( 'Vertical Position', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
+				'label_block' => false,
 				'options' => [
 					'top' => [
 						'title' => __( 'Top', 'elementor-pro' ),
@@ -523,10 +529,7 @@ class Call_To_Action extends Base_Widget {
 				'label' => __( 'Graphic Element', 'elementor-pro' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
-					'graphic_element!' => [
-						'none',
-						'',
-					],
+					'graphic_element!' => 'none',
 				],
 			]
 		);
@@ -775,7 +778,7 @@ class Call_To_Action extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .elementor-cta__title',
 				'condition' => [
 					'title!' => '',
@@ -813,7 +816,7 @@ class Call_To_Action extends Base_Widget {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'description_typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 				'selector' => '{{WRAPPER}} .elementor-cta__description',
 				'condition' => [
 					'description!' => '',
@@ -1012,7 +1015,7 @@ class Call_To_Action extends Base_Widget {
 				'name' => 'button_typography',
 				'label' => __( 'Typography', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .elementor-cta__button',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 			]
 		);
 
@@ -1158,8 +1161,8 @@ class Call_To_Action extends Base_Widget {
 				'label' => __( 'Background Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_4,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_4,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-ribbon-inner' => 'background-color: {{VALUE}}',
@@ -1202,7 +1205,7 @@ class Call_To_Action extends Base_Widget {
 			[
 				'name' => 'ribbon_typography',
 				'selector' => '{{WRAPPER}} .elementor-ribbon-inner',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_4,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_4,
 			]
 		);
 
@@ -1589,11 +1592,19 @@ class Call_To_Action extends Base_Widget {
 
 			if ( 'box' === $settings['link_click'] ) {
 				$wrapper_tag = 'a';
-				$button_tag = 'span';
+				$button_tag = 'button';
 				$link_element = 'wrapper';
 			}
 
-			$this->add_link_attributes( $link_element, $settings['link'] );
+			$this->add_render_attribute( $link_element, 'href', $settings['link']['url'] );
+
+			if ( $settings['link']['is_external'] ) {
+				$this->add_render_attribute( $link_element, 'target', '_blank' );
+			}
+
+			if ( $settings['link']['nofollow'] ) {
+				$this->add_render_attribute( $link_element, 'rel', 'nofollow' );
+			}
 		}
 
 		$this->add_inline_editing_attributes( 'title' );
@@ -1666,15 +1677,7 @@ class Call_To_Action extends Base_Widget {
 		<?php
 	}
 
-	/**
-	 * Render Call to Action widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 2.9.0
-	 * @access protected
-	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<#
 			var wrapperTag = 'div',
@@ -1689,7 +1692,7 @@ class Call_To_Action extends Base_Widget {
 
 			if ( 'box' === settings.link_click ) {
 				wrapperTag = 'a';
-				buttonTag = 'span';
+				buttonTag = 'button';
 				view.addRenderAttribute( 'wrapper', 'href', '#' );
 			}
 

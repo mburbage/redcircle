@@ -61,7 +61,7 @@ class Extensions_Util {
 	 * @param Config  $w3_config
 	 * @return bool
 	 */
-	static public function activate_extension( $extension, $w3_config, $dont_save_config = false ) {
+	static public function activate_extension( $extension, $w3_config ) {
 		$all_extensions = Extensions_Util::get_extensions( $w3_config );
 		$extensions = $w3_config->get_array( 'extensions.active' );
 
@@ -85,11 +85,8 @@ class Extensions_Util {
 				$w3_config->set_extension_active_frontend( $extension, true );
 			}
 
-
 			try {
-				if ( !$dont_save_config ) {
-					$w3_config->save();
-				}
+				$w3_config->save();
 				return true;
 			} catch ( \Exception $ex ) {
 			}

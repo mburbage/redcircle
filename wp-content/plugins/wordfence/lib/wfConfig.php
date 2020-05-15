@@ -74,12 +74,14 @@ class wfConfig {
 			"scansEnabled_options" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"scansEnabled_wpscan_fullPathDisclosure" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"scansEnabled_wpscan_directoryListingEnabled" => array('value' => true, 'autoload' => self::AUTOLOAD),
+			"scansEnabled_dns" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"scansEnabled_scanImages" => array('value' => false, 'autoload' => self::AUTOLOAD),
 			"scansEnabled_highSense" => array('value' => false, 'autoload' => self::AUTOLOAD),
 			"scansEnabled_oldVersions" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"scansEnabled_suspiciousAdminUsers" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"liveActivityPauseEnabled" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"firewallEnabled" => array('value' => true, 'autoload' => self::AUTOLOAD),
+			"blockFakeBots" => array('value' => false, 'autoload' => self::AUTOLOAD),
 			"autoBlockScanners" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"loginSecurityEnabled" => array('value' => true, 'autoload' => self::AUTOLOAD),
 			"loginSec_strongPasswds_enabled" => array('value' => true, 'autoload' => self::AUTOLOAD),
@@ -855,14 +857,14 @@ class wfConfig {
 		return sizeof($emails) > 0 ? true : false;
 	}
 	public static function alertEmailBlacklist() {
-		return array('3c4aa9bd643bd9bb9873014227151a85b24ab8d72fe02cc5799b0edc56eabb67', 'aa06081e3962a3c17a85a06ddf9e418ca1ba8fead3f9b7a20beaf51848a1fd75', 'a25a360bded101e25ebabe5643161ddbb6c3fa33838bbe9a123c2ec0cda8d370', '36e8407dfa80d64cfe42ede4d9d5ce2d4840a5e4781b5f8a7b3b8eacec86fcad', '50cf95aec25369583efdfeff9f0818b4b9266f10e140ea2b648e30202450c21b', '72a09e746cb90ff2646ba1f1d0c0f5ffed6b380642bbbf826d273fffa6ef673b');
+		return array('3c4aa9bd643bd9bb9873014227151a85b24ab8d72fe02cc5799b0edc56eabb67', 'aa06081e3962a3c17a85a06ddf9e418ca1ba8fead3f9b7a20beaf51848a1fd75', 'a25a360bded101e25ebabe5643161ddbb6c3fa33838bbe9a123c2ec0cda8d370', '36e8407dfa80d64cfe42ede4d9d5ce2d4840a5e4781b5f8a7b3b8eacec86fcad');
 	}
 	public static function getAlertEmails() {
 		$blacklist = self::alertEmailBlacklist();
 		$dat = explode(',', self::get('alertEmails'));
 		$emails = array();
 		foreach ($dat as $email) {
-			$email = strtolower(trim($email));
+			$email = trim($email);
 			if (preg_match('/\@/', $email)) {
 				$hash = hash('sha256', $email);
 				if (!in_array($hash, $blacklist)) {
@@ -1758,7 +1760,7 @@ Options -ExecCGI
 				$api = new wfAPI($apiKey, wfUtils::getWPVersion());
 				try {
 					$keyType = wfAPI::KEY_TYPE_FREE;
-					$keyData = $api->call('ping_api_key', array(), array('supportHash' => wfConfig::get('supportHash', ''), 'whitelistHash' => wfConfig::get('whitelistHash', ''), 'tldlistHash' => wfConfig::get('tldlistHash', '')));
+					$keyData = $api->call('ping_api_key', array(), array('supportHash' => wfConfig::get('supportHash', ''), 'whitelistHash' => wfConfig::get('whitelistHash', '')));
 					if (isset($keyData['_isPaidKey'])) {
 						$keyType = wfConfig::get('keyType');
 					}
@@ -1773,10 +1775,6 @@ Options -ExecCGI
 					if (isset($keyData['_whitelist']) && isset($keyData['_whitelistHash'])) {
 						wfConfig::setJSON('whitelistPresets', $keyData['_whitelist']);
 						wfConfig::set('whitelistHash', $keyData['_whitelistHash']);
-					}
-					if (isset($keyData['_tldlist']) && isset($keyData['_tldlistHash'])) {
-						wfConfig::set('tldlist', $keyData['_tldlist']);
-						wfConfig::set('tldlistHash', $keyData['_tldlistHash']);
 					}
 					if (isset($keyData['scanSchedule']) && is_array($keyData['scanSchedule'])) {
 						wfConfig::set_ser('noc1ScanSchedule', $keyData['scanSchedule']);
@@ -1843,6 +1841,7 @@ Options -ExecCGI
 			case self::OPTIONS_TYPE_FIREWALL:
 				$options = array(
 					'firewallEnabled',
+					'blockFakeBots',
 					'autoBlockScanners',
 					'loginSecurityEnabled',
 					'loginSec_strongPasswds_enabled',
@@ -1925,6 +1924,7 @@ Options -ExecCGI
 					'scansEnabled_options',
 					'scansEnabled_wpscan_fullPathDisclosure',
 					'scansEnabled_wpscan_directoryListingEnabled',
+					'scansEnabled_dns',
 					'scansEnabled_scanImages',
 					'scansEnabled_highSense',
 					'scansEnabled_oldVersions',
@@ -2003,6 +2003,7 @@ Options -ExecCGI
 					'email_summary_excluded_directories',
 					'howGetIPs_trusted_proxies',
 					'firewallEnabled',
+					'blockFakeBots',
 					'autoBlockScanners',
 					'loginSecurityEnabled',
 					'loginSec_strongPasswds_enabled',
@@ -2077,6 +2078,7 @@ Options -ExecCGI
 					'scansEnabled_options',
 					'scansEnabled_wpscan_fullPathDisclosure',
 					'scansEnabled_wpscan_directoryListingEnabled',
+					'scansEnabled_dns',
 					'scansEnabled_scanImages',
 					'scansEnabled_highSense',
 					'scansEnabled_oldVersions',

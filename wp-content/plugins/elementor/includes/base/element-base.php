@@ -424,82 +424,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Add link render attributes.
-	 *
-	 * Used to add link tag attributes to a specific HTML element.
-	 *
-	 * The HTML link tag is represented by the element parameter. The `url_control` parameter
-	 * needs to be an array of link settings in the same format they are set by Elementor's URL control.
-	 *
-	 * Example usage:
-	 *
-	 * `$this->add_link_attributes( 'button', $settings['link'] );`
-	 *
-	 * @since 2.8.0
-	 * @access public
-	 *
-	 * @param array|string $element   The HTML element.
-	 * @param array $url_control      Array of link settings.
-	 * @param bool $overwrite         Optional. Whether to overwrite existing
-	 *                                attribute. Default is false, not to overwrite.
-	 *
-	 * @return Element_Base Current instance of the element.
-	 */
-
-	public function add_link_attributes( $element, array $url_control, $overwrite = false ) {
-		$attributes = [];
-
-		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = $url_control['url'];
-		}
-
-		if ( ! empty( $url_control['is_external'] ) ) {
-			$attributes['target'] = '_blank';
-		}
-
-		if ( ! empty( $url_control['nofollow'] ) ) {
-			$attributes['rel'] = 'nofollow';
-		}
-
-		if ( ! empty( $url_control['custom_attributes'] ) ) {
-			// Custom URL attributes should come as a string of comma-delimited key|value pairs
-			$custom_attributes = explode( ',', $url_control['custom_attributes'] );
-			$blacklist = [ 'onclick', 'onfocus', 'onblur', 'onchange', 'onresize', 'onmouseover', 'onmouseout', 'onkeydown', 'onkeyup' ];
-
-			foreach ( $custom_attributes as $attribute ) {
-				// Trim in case users inserted unwanted spaces
-				$attr_key_value = explode( '|', $attribute );
-
-				$attr_key = $attr_key_value[0];
-
-				// Cover cases where key/value have spaces both before and/or after the actual value
-				preg_match( '/[^=]+/', $attr_key, $attr_key_matches );
-
-				$attr_key = trim( $attr_key_matches[0] );
-
-				// Implement attribute blacklist
-				if ( in_array( strtolower( $attr_key ), $blacklist, true ) ) {
-					continue;
-				}
-
-				if ( isset( $attr_key_value[1] ) ) {
-					$attr_value = trim( $attr_key_value[1] );
-				} else {
-					$attr_value = '';
-				}
-
-				$attributes[ $attr_key ] = $attr_value;
-			}
-		}
-
-		if ( $attributes ) {
-			$this->add_render_attribute( $element, $attributes, $overwrite );
-		}
-
-		return $this;
-	}
-
-	/**
 	 * Get Render Attributes
 	 *
 	 * Used to retrieve render attribute.
@@ -893,12 +817,12 @@ abstract class Element_Base extends Controls_Stack {
 	 * Adds more configuration on top of the controls list and the tabs assigned
 	 * to the control. This method also adds element name, type, icon and more.
 	 *
-	 * @since 2.9.0
+	 * @since 1.0.10
 	 * @access protected
 	 *
 	 * @return array The initial config.
 	 */
-	protected function get_initial_config() {
+	protected function _get_initial_config() {
 		$config = [
 			'name' => $this->get_name(),
 			'elType' => $this->get_type(),
@@ -911,10 +835,6 @@ abstract class Element_Base extends Controls_Stack {
 			$config['help_url'] = $this->get_help_url();
 		} else {
 			$config['help_url'] = $this->get_custom_help_url();
-		}
-
-		if ( ! $this->is_editable() ) {
-			$config['editable'] = false;
 		}
 
 		return $config;

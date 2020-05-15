@@ -5,8 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
-
 /**
  * Elementor icon widget.
  *
@@ -218,8 +216,8 @@ class Widget_Icon extends Widget_Base {
 					'{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon svg' => 'fill: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
 				],
 			]
 		);
@@ -307,7 +305,6 @@ class Widget_Icon extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -407,9 +404,16 @@ class Widget_Icon extends Widget_Base {
 		$icon_tag = 'div';
 
 		if ( ! empty( $settings['link']['url'] ) ) {
-			$this->add_link_attributes( 'icon-wrapper', $settings['link'] );
-
+			$this->add_render_attribute( 'icon-wrapper', 'href', $settings['link']['url'] );
 			$icon_tag = 'a';
+
+			if ( ! empty( $settings['link']['is_external'] ) ) {
+				$this->add_render_attribute( 'icon-wrapper', 'target', '_blank' );
+			}
+
+			if ( $settings['link']['nofollow'] ) {
+				$this->add_render_attribute( 'icon-wrapper', 'rel', 'nofollow' );
+			}
 		}
 
 		if ( empty( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
@@ -443,10 +447,10 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * Written as a Backbone JavaScript template and used to generate the live preview.
 	 *
-	 * @since 2.9.0
+	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function _content_template() {
 		?>
 		<# var link = settings.link.url ? 'href="' + settings.link.url + '"' : '',
 				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),

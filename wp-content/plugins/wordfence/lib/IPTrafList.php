@@ -63,13 +63,9 @@ if (!wfUtils::isAdmin()) {
 				<td>
 					<span class="wf-flag <?php echo esc_attr('wf-flag-' . strtolower($v['loc']['countryCode'])); ?>" title="<?php echo esc_attr($v['loc']['countryName']); ?>"></span>
 					<?php if ($v['loc']['city']) {
-						echo esc_html($v['loc']['city']) . ', ';
+						echo $v['loc']['city'] . ', ';
 					} ?>
-					<?php 
-					if ($v['loc']['region'] && wfUtils::shouldDisplayRegion($v['loc']['countryName'])) {
-						echo esc_html($v['loc']['region']) . ', ';
-					} ?>
-					<?php echo esc_html($v['loc']['countryName']); ?>
+					<?php echo $v['loc']['countryName']; ?>
 				</td>
 			</tr>
 		<?php } ?>

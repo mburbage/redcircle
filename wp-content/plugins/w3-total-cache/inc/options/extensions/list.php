@@ -57,10 +57,6 @@ $cb_id = 0;
 foreach ( $extension_keys as $extension ):
 	$meta = $extensions[$extension];
 	$meta = $this->default_meta( $meta );
-	if (!$meta['public']) {
-		continue;
-	}
-
 $cb_id++;
 ?>
 			<?php do_action( "w3tc_extension_before_row-{$extension}" ) ?>
@@ -118,14 +114,17 @@ if ( $links ) {
 					<p>
 						<?php if ( isset( $meta['pro_feature'] ) && $meta['pro_feature'] ): ?>
 							<?php Util_Ui::pro_wrap_maybe_start() ?>
-							<?php Util_Ui::pro_wrap_description( $meta['pro_excerpt'], $meta['pro_description'], 'extension-' .$extension ) ?>
+						<?php endif ?>
+
+						<?php _e( $meta['description'] ) ?>
+
+						<?php if ( isset( $meta['pro_feature'] ) && $meta['pro_feature'] ): ?>
 							<?php Util_Ui::pro_wrap_maybe_end( "extension_$extension" ) ?>
-						<?php else: ?>
-							<?php _e( $meta['description'] ) ?>
 						<?php endif ?>
 
 						<?php if ( !empty( $meta['requirements'] ) ): ?>
-							<p class="description"><?php printf( __( 'Requirements: %s', 'w3-total-cache' ), apply_filters( "w3tc_extension_requirements-{$extension}", $meta['requirements'] ) ) ?></p>
+							<br />
+							<span class="description"><?php printf( __( 'Requirements: %s', 'w3-total-cache' ), apply_filters( "w3tc_extension_requirements-{$extension}", $meta['requirements'] ) ) ?></span>
 							<?php do_action( "w3tc_extension_requirements-{$extension}" ) ?>
 						<?php endif ?>
 					</p>

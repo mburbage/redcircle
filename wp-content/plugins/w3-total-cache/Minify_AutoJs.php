@@ -43,7 +43,16 @@ class Minify_AutoJs {
 	private $debug_minified_urls = array();
 
 	/**
-	 * Current list of script files to minify
+	 * Current position to embed minified script
+	 *
+	 * @var integer
+	 */
+	private $embed_pos;
+
+	/**
+	 * Current list of files to minify
+	 *
+	 * @var array
 	 */
 	private $files_to_minify;
 
@@ -54,6 +63,12 @@ class Minify_AutoJs {
 	 */
 	private $group_type = 'head';
 
+	/**
+	 * Current number of minification group
+	 *
+	 * @var integer
+	 */
+	private $minify_group_number = 0;
 	private $debug = false;
 
 	/**
@@ -105,28 +120,14 @@ class Minify_AutoJs {
 			$script_tags );
 
 		// pass scripts
-		$this->files_to_minify = array(
-			'sync' => array(
-				'embed_pos' => 0,
-				'files' => array()
-			),
-			'async' => array(
-				'embed_pos' => 0,
-				'files' => array()
-			),
-			'defer' => array(
-				'embed_pos' => 0,
-				'files' => array()
-			)
-		);
+		$this->embed_pos = null;
+		$this->files_to_minify = array();
 
 		for ( $n = 0; $n < count( $script_tags ); $n++ ) {
 			$this->process_script_tag( $script_tags[$n], $n );
 		}
 
-		$this->flush_collected( 'sync', '' );
-		$this->flush_collected( 'async', '' );
-		$this->flush_collected( 'defer', '' );
+		$this->flush_collected( '' );
 
 		return $this->buffer;
 	}
@@ -190,7 +191,7 @@ class Minify_AutoJs {
 				Minify_Core::log( 'its not src=, flushing' );
 			}
 
-			$this->flush_collected( 'sync', $script_tag );
+			$this->flush_collected( $script_tag );
 
 			if ( preg_match( '~</head>~is', $script_tag, $match ) )
 				$this->group_type = 'body';
@@ -209,8 +210,9 @@ class Minify_AutoJs {
 
 		$step1 = !empty( $step1_result );
 		$step2 = !in_array( $file, $this->ignore_js_files );
+		$step3 = !preg_match( '~\s+(async|defer)[> ]~is', $script_tag );
 
-		$do_tag_minification = $step1 && $step2;
+		$do_tag_minification = $step1 && $step2 && $step3;
 		$do_tag_minification = apply_filters( 'w3tc_minify_js_do_tag_minification',
 			$do_tag_minification, $script_tag, $file );
 
@@ -242,7 +244,7 @@ class Minify_AutoJs {
 					strlen( $script_tag ) );
 			}
 
-			$this->flush_collected( 'sync', $script_tag );
+			$this->flush_collected( $script_tag );
 			return;
 		}
 
@@ -250,51 +252,33 @@ class Minify_AutoJs {
 		$this->buffer = substr_replace( $this->buffer, '',
 			$tag_pos, strlen( $script_tag ) );
 
-		$m = null;
-		if ( !preg_match( '~\s+(async|defer)[> ]~is', $script_tag, $m ) ) {
-			$sync_type = 'sync';
-
-			// for head group - put minified file at the place of first script
-			// for body - put at the place of last script, to make as more DOM
-			// objects available as possible
-			if ( count( $this->files_to_minify[$sync_type]['files'] ) <= 0 ||
-					$this->group_type == 'body' ) {
-				$this->files_to_minify[$sync_type]['embed_pos'] = $tag_pos;
-			}
-		} else {
-			$sync_type = strtolower( $m[1] );
-			$this->files_to_minify[$sync_type]['embed_pos'] = $tag_pos;
-		}
-
-		$this->files_to_minify[$sync_type]['files'][] = $file;
+		// for head group - put minified file at the place of first script
+		// for body - put at the place of last script, to make as more DOM
+		// objects available as possible
+		if ( count( $this->files_to_minify ) <= 0 || $this->group_type == 'body' )
+			$this->embed_pos = $tag_pos;
+		$this->files_to_minify[] = $file;
 	}
 
 	/**
 	 * Minifies collected scripts
 	 */
-	private function flush_collected( $sync_type, $last_script_tag ) {
-		if ( count( $this->files_to_minify[$sync_type]['files'] ) <= 0 ) {
+	private function flush_collected( $last_script_tag ) {
+		if ( count( $this->files_to_minify ) <= 0 )
 			return;
-		}
 		$do_flush_collected = apply_filters( 'w3tc_minify_js_do_flush_collected',
-			true, $last_script_tag, $this, $sync_type );
-		if ( !$do_flush_collected ) {
+			true, $last_script_tag, $this );
+		if ( !$do_flush_collected )
 			return;
-		}
+
+		// find embed position
+		$embed_pos = $this->embed_pos;
 
 		// build minified script tag
-		if ( $sync_type == 'sync' ) {
-			$embed_type = $this->embed_type[$this->group_type];
-		} elseif ( $sync_type == 'async' ) {
-			$embed_type = 'nb-async';
-		} elseif ( $sync_type == 'defer' ) {
-			$embed_type = 'nb-defer';
-		}
-
 		$data = array(
-			'files_to_minify' => $this->files_to_minify[$sync_type]['files'],
-			'embed_pos' => $this->files_to_minify[$sync_type]['embed_pos'],
-			'embed_type' => $embed_type,
+			'files_to_minify' => $this->files_to_minify,
+			'embed_pos' => $embed_pos,
+			'embed_type' => $this->embed_type[$this->group_type],
 			'buffer' => $this->buffer
 		);
 
@@ -325,17 +309,9 @@ class Minify_AutoJs {
 			// replace
 			$this->buffer = substr_replace( $this->buffer,
 				$data['script_to_embed_body'], $data['embed_pos'], 0 );
-
-			foreach ( $this->files_to_minify as $key => $i ) {
-				if ( $key != $sync_type && $i['embed_pos'] >= $data['embed_pos'] ) {
-					$this->files_to_minify[$key]['embed_pos'] += strlen( $data['script_to_embed_body'] );
-				}
-			}
 		}
 
-		$this->files_to_minify[$sync_type] = array(
-			'embed_pos' => 0,
-			'files' => array()
-		);
+		$this->files_to_minify = array();
+		$this->minify_group_number++;
 	}
 }

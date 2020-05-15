@@ -19,11 +19,12 @@ if ( isset( $details['error_message'] ) )
 					<input name="api_key" type="text" class="w3tc-ignore-change"
 						style="width: 550px"
 						value="<?php echo esc_attr( $details['api_key'] ) ?>" />
-					<p class="description">
+					<br />
+					<span class="description">
 						To obtain API key you can
 						<a target="_blank" href="<?php echo esc_attr( $url_obtain_key ) ?>">click here</a>,
 						log in, and paste the key in above field.
-					</p>
+					</span>
 				</td>
 			</tr>
 		</table>

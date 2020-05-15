@@ -622,21 +622,12 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	public static function recalc_usage_data( $updater ) {
+	public static function _v_2_7_1_recalc_usage_data( $updater ) {
 		/** @var Module $module */
 		$module = Plugin::$instance->modules_manager->get_modules( 'usage' );
 
 		$post_count = $module->recalc_usage( $updater->get_limit(), $updater->get_current_offset() );
 
 		return ( $post_count === $updater->get_limit() );
-	}
-
-	public static function _v_2_7_1_recalc_usage_data( $updater ) {
-		return self::recalc_usage_data( $updater );
-	}
-
-	public static function _v_2_8_3_recalc_usage_data( $updater ) {
-		// Re-calc since older version(s) had invalid values.
-		return self::recalc_usage_data( $updater );
 	}
 }

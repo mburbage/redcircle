@@ -2,10 +2,11 @@
 namespace ElementorPro\Modules\ThemeElements\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Repeater;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -59,6 +60,7 @@ class Post_Info extends Base {
 				],
 				'render_type' => 'template',
 				'classes' => 'elementor-control-start-end',
+				'label_block' => false,
 			]
 		);
 
@@ -86,6 +88,7 @@ class Post_Info extends Base {
 			[
 				'label' => __( 'Date Format', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
+				'label_block' => false,
 				'default' => 'default',
 				'options' => [
 					'default' => 'Default',
@@ -107,6 +110,7 @@ class Post_Info extends Base {
 				'label' => __( 'Custom Date Format', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => 'F j, Y',
+				'label_block' => false,
 				'condition' => [
 					'type' => 'date',
 					'date_format' => 'custom',
@@ -124,6 +128,7 @@ class Post_Info extends Base {
 			[
 				'label' => __( 'Time Format', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
+				'label_block' => false,
 				'default' => 'default',
 				'options' => [
 					'default' => 'Default',
@@ -144,6 +149,7 @@ class Post_Info extends Base {
 				'type' => Controls_Manager::TEXT,
 				'default' => 'g:i a',
 				'placeholder' => 'g:i a',
+				'label_block' => false,
 				'condition' => [
 					'type' => 'time',
 					'time_format' => 'custom',
@@ -175,6 +181,7 @@ class Post_Info extends Base {
 			[
 				'label' => __( 'Before', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
+				'label_block' => false,
 				'condition' => [
 					'type!' => 'custom',
 				],
@@ -223,6 +230,7 @@ class Post_Info extends Base {
 			[
 				'label' => __( 'No Comments', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
+				'label_block' => false,
 				'placeholder' => __( 'No Comments', 'elementor-pro' ),
 				'condition' => [
 					'comments_custom_strings' => 'yes',
@@ -236,6 +244,7 @@ class Post_Info extends Base {
 			[
 				'label' => __( 'One Comment', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
+				'label_block' => false,
 				'placeholder' => __( 'One Comment', 'elementor-pro' ),
 				'condition' => [
 					'comments_custom_strings' => 'yes',
@@ -249,6 +258,7 @@ class Post_Info extends Base {
 			[
 				'label' => __( 'Comments', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
+				'label_block' => false,
 				'placeholder' => __( '%s Comments', 'elementor-pro' ),
 				'condition' => [
 					'comments_custom_strings' => 'yes',
@@ -547,8 +557,8 @@ class Post_Info extends Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ddd',
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 				'condition' => [
 					'divider' => 'yes',
@@ -580,8 +590,8 @@ class Post_Info extends Base {
 					'{{WRAPPER}} .elementor-icon-list-icon svg' => 'fill: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
 				],
 			]
 		);
@@ -644,8 +654,8 @@ class Post_Info extends Base {
 					'{{WRAPPER}} .elementor-icon-list-text, {{WRAPPER}} .elementor-icon-list-text a' => 'color: {{VALUE}}',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_2,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_2,
 				],
 			]
 		);
@@ -655,7 +665,7 @@ class Post_Info extends Base {
 			[
 				'name' => 'icon_typography',
 				'selector' => '{{WRAPPER}} .elementor-icon-list-item',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -862,7 +872,16 @@ class Post_Info extends Base {
 		if ( ! empty( $item_data['url']['url'] ) ) {
 			$has_link = true;
 
-			$this->add_link_attributes( $link_key, $item_data['url'] );
+			$url = $item_data['url'];
+			$this->add_render_attribute( $link_key, 'href', $url['url'] );
+
+			if ( ! empty( $url['is_external'] ) ) {
+				$this->add_render_attribute( $link_key, 'target', '_blank' );
+			}
+
+			if ( ! empty( $url['nofollow'] ) ) {
+				$this->add_render_attribute( $link_key, 'rel', 'nofollow' );
+			}
 		}
 
 		if ( ! empty( $item_data['itemprop'] ) ) {
@@ -908,26 +927,24 @@ class Post_Info extends Base {
 		$is_new = empty( $repeater_item['icon'] ) && $migration_allowed;
 		$show_icon = 'none' !== $repeater_item['show_icon'];
 
-		if ( ! empty( $item_data['image'] ) || $show_icon ) {
-			?>
-			<span class="elementor-icon-list-icon">
+		?>
+		<span class="elementor-icon-list-icon">
 			<?php
 			if ( ! empty( $item_data['image'] ) ) :
 				$image_data = 'image_' . $repeater_index;
 				$this->add_render_attribute( $image_data, 'src', $item_data['image'] );
 				$this->add_render_attribute( $image_data, 'alt', $item_data['text'] );
 				?>
-					<img class="elementor-avatar" <?php echo $this->get_render_attribute_string( $image_data ); ?>>
-				<?php elseif ( $show_icon ) : ?>
-					<?php if ( $is_new || $migrated ) :
-						Icons_Manager::render_icon( $item_data['selected_icon'], [ 'aria-hidden' => 'true' ] );
-					else : ?>
-						<i class="<?php echo esc_attr( $item_data['icon'] ); ?>" aria-hidden="true"></i>
-					<?php endif; ?>
+				<img class="elementor-avatar" <?php echo $this->get_render_attribute_string( $image_data ); ?>>
+			<?php elseif ( $show_icon ) : ?>
+				<?php if ( $is_new || $migrated ) :
+					Icons_Manager::render_icon( $item_data['selected_icon'], [ 'aria-hidden' => 'true' ] );
+				else : ?>
+					<i class="<?php echo esc_attr( $item_data['icon'] ); ?>" aria-hidden="true"></i>
 				<?php endif; ?>
-			</span>
-			<?php
-		}
+			<?php endif; ?>
+		</span>
+		<?php
 	}
 
 	protected function render_item_text( $item_data, $repeater_index ) {

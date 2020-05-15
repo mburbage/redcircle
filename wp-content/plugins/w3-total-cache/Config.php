@@ -77,19 +77,10 @@ class Config {
 	static public function util_config_filename( $blog_id, $preview ) {
 		$postfix = ( $preview ? '-preview' : '' ) . '.php';
 
-		if ( $blog_id <= 0 ) {
-			$filename = W3TC_CONFIG_DIR . '/master' . $postfix;
-		} else {
-			$filename = W3TC_CONFIG_DIR . '/' . sprintf( '%06d', $blog_id ) . $postfix;
-		}
-
-		$d = w3tc_apply_filters( 'config_filename', array(
-			'blog_id' => $blog_id,
-			'preview' => $preview,
-			'filename' => $filename
-		) );
-
-		return $d['filename'];
+		if ( $blog_id <= 0 )
+			return W3TC_CONFIG_DIR . '/master' . $postfix;
+		else
+			return W3TC_CONFIG_DIR . '/' . sprintf( '%06d', $blog_id ) . $postfix;
 	}
 
 
@@ -285,27 +276,12 @@ class Config {
 	public function set_extension_active_frontend( $extension,
 		$is_active_frontend ) {
 		$a = $this->get_array( 'extensions.active_frontend' );
-		if ( !$is_active_frontend ) {
+		if ( !$is_active_frontend )
 			unset( $a[$extension] );
-		} else {
+		else
 			$a[$extension] = '*';
-		}
 
 		$this->set( 'extensions.active_frontend', $a );
-	}
-
-
-
-	public function set_extension_active_dropin( $extension,
-		$is_active_dropin ) {
-		$a = $this->get_array( 'extensions.active_dropin' );
-		if ( !$is_active_dropin ) {
-			unset( $a[$extension] );
-		} else {
-			$a[$extension] = '*';
-		}
-
-		$this->set( 'extensions.active_dropin', $a );
 	}
 
 

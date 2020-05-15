@@ -2,11 +2,14 @@
 namespace ElementorPro\Modules\ThemeElements\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
 use ElementorPro\Modules\QueryControl\Module as Query_Module;
+use ElementorPro\Modules\QueryControl\Controls\Group_Control_Query;
+use ElementorPro\Modules\QueryControl\Classes\Elementor_Post_Query;
 use Elementor\Repeater;
-use ElementorPro\Core\Utils;
+use ElementorPro\Classes\Utils;
 use Elementor\Group_Control_Typography;
+use Elementor\Scheme_Color;
+use Elementor\Scheme_Typography;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -400,8 +403,8 @@ class Sitemap extends Base {
 					'{{WRAPPER}} .elementor-sitemap-title' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_1,
 				],
 			]
 		);
@@ -411,7 +414,7 @@ class Sitemap extends Base {
 			[
 				'name' => 'sitemap_title_typography',
 				'selector' => '{{WRAPPER}} .elementor-sitemap-title',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_1,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
 			]
 		);
 
@@ -434,8 +437,8 @@ class Sitemap extends Base {
 					'{{WRAPPER}} .elementor-sitemap-item, {{WRAPPER}} span.elementor-sitemap-list, {{WRAPPER}} .elementor-sitemap-item a' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 			]
 		);
@@ -445,7 +448,7 @@ class Sitemap extends Base {
 			[
 				'name' => 'sitemap_list_item_typography',
 				'selector' => '{{WRAPPER}} .elementor-sitemap-item, {{WRAPPER}} span.elementor-sitemap-list, {{WRAPPER}} .elementor-sitemap-item a',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
+				'scheme' => Scheme_Typography::TYPOGRAPHY_3,
 			]
 		);
 
@@ -468,8 +471,8 @@ class Sitemap extends Base {
 					'{{WRAPPER}} .elementor-sitemap-item' => 'color: {{VALUE}};',
 				],
 				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
+					'type' => Scheme_Color::get_type(),
+					'value' => Scheme_Color::COLOR_3,
 				],
 			]
 		);
@@ -480,6 +483,7 @@ class Sitemap extends Base {
 				'label' => __( 'Style', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'disc',
+				'label_block' => true,
 				'options' => [
 					'disc' => [
 						'title' => __( 'Disc', 'elementor-pro' ),

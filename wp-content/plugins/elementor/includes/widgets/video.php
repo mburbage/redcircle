@@ -218,7 +218,7 @@ class Widget_Video extends Widget_Base {
 				'label' => __( 'URL', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'autocomplete' => false,
-				'options' => false,
+				'show_external' => false,
 				'label_block' => true,
 				'show_label' => false,
 				'dynamic' => [
@@ -276,17 +276,6 @@ class Widget_Video extends Widget_Base {
 			[
 				'label' => __( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-			]
-		);
-
-		$this->add_control(
-			'play_on_mobile',
-			[
-				'label' => __( 'Play On Mobile', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'condition' => [
-					'autoplay' => 'yes',
-				],
 			]
 		);
 
@@ -919,10 +908,6 @@ class Widget_Video extends Widget_Base {
 
 		if ( $settings['autoplay'] && ! $this->has_image_overlay() ) {
 			$params['autoplay'] = '1';
-
-			if ( $settings['play_on_mobile'] ) {
-				$params['playsinline'] = '1';
-			}
 		}
 
 		$params_dictionary = [];
@@ -1042,10 +1027,6 @@ class Widget_Video extends Widget_Base {
 
 		if ( $settings['mute'] ) {
 			$video_params['muted'] = 'muted';
-		}
-
-		if ( $settings['play_on_mobile'] ) {
-			$video_params['playsinline'] = '';
 		}
 
 		if ( ! $settings['download_button'] ) {

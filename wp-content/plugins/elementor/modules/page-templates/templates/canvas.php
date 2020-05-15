@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	echo \Elementor\Utils::get_meta_viewport( 'canvas' );
 	?>
 </head>
-<body <?php body_class(); ?>>
+<body <?php body_class(); ?>> 
 	<?php
 	Elementor\Modules\PageTemplates\Module::body_open();
 	/**

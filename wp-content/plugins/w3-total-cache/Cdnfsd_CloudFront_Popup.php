@@ -240,8 +240,8 @@ class Cdnfsd_CloudFront_Popup {
 
 		if ( isset( $details[$field]['current'] ) &&
 			$details[$field]['current'] != $details[$field]['new'] ) {
-			echo '<p class="description">currently set to <strong>' .
-				$details[$field]['current'] . '</strong></p>';
+			echo '<br /><span class="description">currently set to <strong>' .
+				$details[$field]['current'] . '</strong></span>';
 		}
 	}
 

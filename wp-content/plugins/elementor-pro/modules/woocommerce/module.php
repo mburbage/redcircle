@@ -22,7 +22,6 @@ class Module extends Module_Base {
 	const OPTION_NAME_USE_MINI_CART = 'use_mini_cart_template';
 
 	protected $docs_types = [];
-	protected $use_mini_cart_template;
 
 	public static function is_active() {
 		return class_exists( 'woocommerce' );
@@ -171,8 +170,8 @@ class Module extends Module_Base {
 		?>
 		<div class="elementor-menu-cart__wrapper">
 			<?php if ( ! $widget_cart_is_hidden ) : ?>
-			<div class="elementor-menu-cart__container elementor-lightbox" aria-expanded="false">
-				<div class="elementor-menu-cart__main" aria-expanded="false">
+			<div class="elementor-menu-cart__container elementor-lightbox">
+				<div class="elementor-menu-cart__main">
 					<div class="elementor-menu-cart__close-button"></div>
 					<div class="widget_shopping_cart_content"></div>
 				</div>
@@ -193,7 +192,7 @@ class Module extends Module_Base {
 	 */
 	public function menu_cart_fragments( $fragments ) {
 		$has_cart = is_a( WC()->cart, 'WC_Cart' );
-		if ( ! $has_cart || ! $this->use_mini_cart_template ) {
+		if ( ! $has_cart ) {
 			return $fragments;
 		}
 
@@ -218,6 +217,20 @@ class Module extends Module_Base {
 			WC()->cart = new \WC_Cart();
 			WC()->customer = new \WC_Customer( get_current_user_id(), true );
 		}
+	}
+
+	public function localized_settings( $settings ) {
+		$settings = array_replace_recursive( $settings, [
+			'widgets' => [
+				'theme-archive-title' => [
+					'categories' => [
+						'woocommerce-elements-archive',
+					],
+				],
+			],
+		] );
+
+		return $settings;
 	}
 
 	public function localized_settings_frontend( $settings ) {
@@ -255,7 +268,9 @@ class Module extends Module_Base {
 			return $template;
 		}
 
-		if ( ! $this->use_mini_cart_template ) {
+		$use_mini_cart_template = get_option( 'elementor_' . self::OPTION_NAME_USE_MINI_CART, 'no' );
+
+		if ( 'yes' !== $use_mini_cart_template ) {
 			return $template;
 		}
 
@@ -266,27 +281,6 @@ class Module extends Module_Base {
 		}
 
 		return $template;
-	}
-
-	/**
-	 * WooCommerce/WordPress widget(s), some of the widgets have css classes that used by final selectors.
-	 * before this filter, all those widgets were warped by `.elementor-widget-container` without chain original widget
-	 * classes, now they will be warped by div with the original css classes.
-	 *
-	 * @param array $default_widget_args
-	 * @param \Elementor\Widget_WordPress $widget
-	 *
-	 * @return array $default_widget_args
-	 */
-	public function woocommerce_wordpress_widget_css_class( $default_widget_args, $widget ) {
-		$widget_instance = $widget->get_widget_instance();
-
-		if ( ! empty( $widget_instance->widget_cssclass ) ) {
-			$default_widget_args['before_widget'] .= '<div class="' . $widget_instance->widget_cssclass . '">';
-			$default_widget_args['after_widget'] .= '</div>';
-		}
-
-		return $default_widget_args;
 	}
 
 	public function register_admin_fields( Settings $settings ) {
@@ -301,7 +295,7 @@ class Module extends Module_Base {
 						'type' => 'select',
 						'std' => 'initial',
 						'options' => [
-							'initial' => '', // Relevant until either menu-cart widget is used or option is explicitly set to 'no'.
+							'initial' => '',
 							'no' => __( 'Disable', 'elementor-pro' ),
 							'yes' => __( 'Enable', 'elementor-pro' ),
 						],
@@ -315,8 +309,6 @@ class Module extends Module_Base {
 	public function __construct() {
 		parent::__construct();
 
-		$this->use_mini_cart_template = 'yes' === get_option( 'elementor_' . self::OPTION_NAME_USE_MINI_CART, 'no' );
-
 		if ( is_admin() ) {
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_fields' ], 15 );
 		}
@@ -328,6 +320,7 @@ class Module extends Module_Base {
 
 		add_filter( 'elementor/theme/need_override_location', [ $this, 'theme_template_include' ], 10, 2 );
 
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'localized_settings' ] );
 		add_filter( 'elementor_pro/frontend/localize_settings', [ $this, 'localized_settings_frontend' ] );
 
 		// On Editor - Register WooCommerce frontend hooks before the Editor init.
@@ -336,11 +329,8 @@ class Module extends Module_Base {
 			add_action( 'init', [ $this, 'register_wc_hooks' ], 5 );
 		}
 
-		if ( $this->use_mini_cart_template ) {
-			add_filter( 'woocommerce_add_to_cart_fragments', [ $this, 'menu_cart_fragments' ] );
-			add_filter( 'woocommerce_locate_template', [ $this, 'woocommerce_locate_template' ], 10, 3 );
-		}
+		add_filter( 'woocommerce_add_to_cart_fragments', [ $this, 'menu_cart_fragments' ] );
 
-		add_filter( 'elementor/widgets/wordpress/widget_args', [ $this, 'woocommerce_wordpress_widget_css_class' ], 10, 2 );
+		add_filter( 'woocommerce_locate_template', [ $this, 'woocommerce_locate_template' ], 10, 3 );
 	}
 }

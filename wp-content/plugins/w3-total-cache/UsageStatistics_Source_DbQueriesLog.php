@@ -26,7 +26,7 @@ class UsageStatistics_Source_DbQueriesLog {
 	/**
 	 * Lists entries from log
 	 **/
-	public function list_entries() {
+	public function list() {
 		$log_filename = Util_Debug::log_filename( 'dbcache-queries' );
 		$h = @fopen( $log_filename, 'rb' );
 		if ( !$h ) {

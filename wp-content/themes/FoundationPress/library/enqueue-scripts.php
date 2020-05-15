@@ -38,9 +38,6 @@ if ( ! function_exists( 'foundationpress_scripts' ) ) :
 
 		// Enqueue the main Stylesheet.
 		wp_enqueue_style( 'main-stylesheet', get_stylesheet_directory_uri() . '/dist/assets/css/' . foundationpress_asset_path( 'app.css' ), array(), '2.10.4', 'all' );
-		
-		// Enqueue the cost estimate stylesheet.
-		wp_enqueue_style( 'cost-stylesheet', get_stylesheet_directory_uri() . '/cost-styles.css', array(), '2.10.4', 'all' );
 
 		// Deregister the jquery version bundled with WordPress.
 		wp_deregister_script( 'jquery' );

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Logger;
 
-use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\System_Info\Classes\Abstracts\Base_Reporter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 2.4.0
  */
-class Log_Reporter extends Base {
+class Log_Reporter extends Base_Reporter {
 
 	const MAX_ENTRIES = 20;
 	const CLEAR_LOG_ACTION = 'elementor-clear-log';
@@ -23,18 +23,17 @@ class Log_Reporter extends Base {
 	public function get_title() {
 		$title = 'Log';
 
-		if ( 'html' === $this->_properties['format'] && empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
+		if ( empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$nonce = wp_create_nonce( self::CLEAR_LOG_ACTION );
 			$url = add_query_arg( [
 				self::CLEAR_LOG_ACTION => 1,
 				'_wpnonce' => $nonce,
 			] );
 
-			$title .= '<a href="' . esc_url( $url ) . '#elementor-clear-log" class="box-title-tool">' . __( 'Clear Log', 'elementor' ) . '</a>';
-			$title .= '<span id="elementor-clear-log"></span>';
+			$title .= '<a href="' . $url . '#elementor-clear-log" class="box-title-tool">' . __( 'Clear Log', 'elementor' ) . '</a>';
 		}
 
-		return $title;
+		return $title . '<span id="elementor-clear-log"></span>';
 	}
 
 	public function get_fields() {
@@ -61,14 +60,13 @@ class Log_Reporter extends Base {
 		}
 
 		$log_string = 'No entries to display';
-		$log_entries = $logger->get_formatted_log_entries( self::MAX_ENTRIES, false );
+		$log_entries = $logger->get_formatted_log_entries( self::MAX_ENTRIES, true );
 
 		if ( ! empty( $log_entries ) ) {
 			$entries_string = '';
 			foreach ( $log_entries as $key => $log_entry ) {
 				if ( $log_entry['count'] ) {
-					$entries_string .= '<h3>' . sprintf( '%s: showing %s of %s', $key, $log_entry['count'], $log_entry['total_count'] ) . '</h3>';
-					$entries_string .= '<div class="elementor-log-entries">' . $log_entry['entries'] . '</div>';
+					$entries_string .= '<table><thead><th>' . sprintf( '%s: showing %s of %s', $key, $log_entry['count'], $log_entry['total_count'] ) . '</th></thead><tbody class="elementor-log-entries">' . $log_entry['entries'] . '</tbody></table>';
 				}
 			}
 
@@ -83,6 +81,7 @@ class Log_Reporter extends Base {
 	}
 
 	public function get_raw_log_entries() {
+
 		$log_string = 'No entries to display';
 
 		/** @var \Elementor\Core\Logger\Manager $manager */
