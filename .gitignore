@@ -20,6 +20,7 @@
 # and "themes" directories.
 wp-content/*
 wp-content/wflogs/*
+.vscode/*
 !wp-content/plugins/
 !wp-content/themes/
 
