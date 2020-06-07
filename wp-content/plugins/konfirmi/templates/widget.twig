@@ -1,0 +1,14 @@
+{% if site_key %}
+    <div id="konfirmi-container-{{id}}" class="konfirmi-container">
+    <div 
+    onclick="window.konfirmiPopup = window.open(this.getAttribute('data-url'),'Konfirmi','resizable,height=520,width=640');
+          const w_containers = document.getElementsByClassName('active_widget');
+          Array.from(w_containers).forEach(e => e.classList.remove('active_widget'));
+          this.previousSibling.parentElement.classList.add('active_widget');
+    "
+    data-url="{{url}}/form/{{site_key}}" style="display: inline-block; cursor: pointer">
+        <img src="{{url}}/form/{{site_key}}/get-button-background" onerror="document.querySelector('#konfirmi-container-{{id}}').innerHTML=''" style="pointer-events: none;">
+    </div>
+    <input type="hidden" value="test_input">
+    </div>
+{% endif %}
