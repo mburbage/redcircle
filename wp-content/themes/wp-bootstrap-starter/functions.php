@@ -170,7 +170,7 @@ function wp_bootstrap_starter_scripts() {
         wp_enqueue_style( 'wp-bootstrap-starter-fontawesome-cdn', get_template_directory_uri() . '/inc/assets/css/fontawesome.min.css' );
 	}
 	
-	wp_enqueue_style( 'wp-bootstrap-starter-bootstrap-css', get_template_directory_uri() . '/inc/assets/css/cost-styles.css' );
+	wp_enqueue_style( 'wp-cost-estimator-css', get_template_directory_uri() . '/inc/assets/css/cost-styles.css' );
 
 	// load bootstrap css
 	// load AItheme styles
