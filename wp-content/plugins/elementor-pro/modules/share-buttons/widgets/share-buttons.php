@@ -7,7 +7,6 @@ use Elementor\Icons_Manager;
 use Elementor\Repeater;
 use ElementorPro\Base\Base_Widget;
 use ElementorPro\Modules\ShareButtons\Module;
-use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -69,10 +68,6 @@ class Share_Buttons extends Base_Widget {
 		return [ 'sharing', 'social', 'icon', 'button', 'like' ];
 	}
 
-	public function get_script_depends() {
-		return [ 'social-share' ];
-	}
-
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_buttons_content',
@@ -119,9 +114,6 @@ class Share_Buttons extends Base_Widget {
 						'button' => 'facebook',
 					],
 					[
-						'button' => 'google',
-					],
-					[
 						'button' => 'twitter',
 					],
 					[
@@ -137,7 +129,6 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => __( 'View', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
-				'label_block' => false,
 				'options' => [
 					'icon-text' => 'Icon & Text',
 					'icon' => 'Icon',
@@ -264,7 +255,7 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => __( 'Link', 'elementor-pro' ),
 				'type' => Controls_Manager::URL,
-				'show_external' => false,
+				'options' => false,
 				'placeholder' => __( 'https://your-link.com', 'elementor-pro' ),
 				'condition' => [
 					'share_url_type' => 'custom',
@@ -439,10 +430,9 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => __( 'Color', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
-				'label_block' => false,
 				'options' => [
-					'official' => 'Official Color',
-					'custom' => 'Custom Color',
+					'official' => __( 'Official', 'elementor-pro' ),
+					'custom' => __( 'Custom', 'elementor-pro' ),
 				],
 				'default' => 'official',
 				'prefix_class' => 'elementor-share-buttons--color-',
@@ -450,15 +440,19 @@ class Share_Buttons extends Base_Widget {
 			]
 		);
 
-		$this->start_controls_tabs( 'tabs_button_style' );
+		$this->start_controls_tabs(
+			'tabs_button_style',
+			[
+				'condition' => [
+					'color_source' => 'custom',
+				],
+			]
+		);
 
 		$this->start_controls_tab(
 			'tab_button_normal',
 			[
 				'label' => __( 'Normal', 'elementor-pro' ),
-				'condition' => [
-					'color_source' => 'custom',
-				],
 			]
 		);
 
@@ -477,9 +471,6 @@ class Share_Buttons extends Base_Widget {
 					 {{WRAPPER}}.elementor-share-buttons--skin-minimal .elementor-share-btn,
 					 {{WRAPPER}}.elementor-share-buttons--skin-boxed .elementor-share-btn' => 'color: {{VALUE}}; border-color: {{VALUE}}',
 				],
-				'condition' => [
-					'color_source' => 'custom',
-				],
 			]
 		);
 
@@ -489,17 +480,17 @@ class Share_Buttons extends Base_Widget {
 				'label' => __( 'Secondary Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn__icon, 
-					 {{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn__text, 
+					'{{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn__icon,
+					 {{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn__text,
 					 {{WRAPPER}}.elementor-share-buttons--skin-gradient .elementor-share-btn__icon,
 					 {{WRAPPER}}.elementor-share-buttons--skin-gradient .elementor-share-btn__text,
 					 {{WRAPPER}}.elementor-share-buttons--skin-boxed .elementor-share-btn__icon,
 					 {{WRAPPER}}.elementor-share-buttons--skin-minimal .elementor-share-btn__icon' => 'color: {{VALUE}}',
 				],
-				'condition' => [
-					'color_source' => 'custom',
-				],
 				'separator' => 'after',
+				'condition' => [
+					'skin!' => 'framed',
+				],
 			]
 		);
 
@@ -509,9 +500,6 @@ class Share_Buttons extends Base_Widget {
 			'tab_button_hover',
 			[
 				'label' => __( 'Hover', 'elementor-pro' ),
-				'condition' => [
-					'color_source' => 'custom',
-				],
 			]
 		);
 
@@ -526,11 +514,8 @@ class Share_Buttons extends Base_Widget {
 					'{{WRAPPER}}.elementor-share-buttons--skin-framed .elementor-share-btn:hover,
 					 {{WRAPPER}}.elementor-share-buttons--skin-minimal .elementor-share-btn:hover,
 					 {{WRAPPER}}.elementor-share-buttons--skin-boxed .elementor-share-btn:hover' => 'color: {{VALUE}}; border-color: {{VALUE}}',
-					'{{WRAPPER}}.elementor-share-buttons--skin-boxed .elementor-share-btn:hover .elementor-share-btn__icon, 
+					'{{WRAPPER}}.elementor-share-buttons--skin-boxed .elementor-share-btn:hover .elementor-share-btn__icon,
 					 {{WRAPPER}}.elementor-share-buttons--skin-minimal .elementor-share-btn:hover .elementor-share-btn__icon' => 'background-color: {{VALUE}}',
-				],
-				'condition' => [
-					'color_source' => 'custom',
 				],
 			]
 		);
@@ -541,15 +526,12 @@ class Share_Buttons extends Base_Widget {
 				'label' => __( 'Secondary Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn:hover .elementor-share-btn__icon, 
-					 {{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn:hover .elementor-share-btn__text, 
+					'{{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn:hover .elementor-share-btn__icon,
+					 {{WRAPPER}}.elementor-share-buttons--skin-flat .elementor-share-btn:hover .elementor-share-btn__text,
 					 {{WRAPPER}}.elementor-share-buttons--skin-gradient .elementor-share-btn:hover .elementor-share-btn__icon,
 					 {{WRAPPER}}.elementor-share-buttons--skin-gradient .elementor-share-btn:hover .elementor-share-btn__text,
 					 {{WRAPPER}}.elementor-share-buttons--skin-boxed .elementor-share-btn:hover .elementor-share-btn__icon,
 					 {{WRAPPER}}.elementor-share-buttons--skin-minimal .elementor-share-btn:hover .elementor-share-btn__icon' => 'color: {{VALUE}}',
-				],
-				'condition' => [
-					'color_source' => 'custom',
 				],
 				'separator' => 'after',
 			]
@@ -633,7 +615,15 @@ class Share_Buttons extends Base_Widget {
 		<?php
 	}
 
-	protected function _content_template() {
+	/**
+	 * Render Share Buttons widget output in the editor.
+	 *
+	 * Written as a Backbone JavaScript template and used to generate the live preview.
+	 *
+	 * @since 2.9.0
+	 * @access protected
+	 */
+	protected function content_template() {
 		?>
 		<#
 			var shareButtonsEditorModule = elementorPro.modules.shareButtons,

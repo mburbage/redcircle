@@ -5,7 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Elements_Manager;
 use Elementor\TemplateLibrary\Source_Local;
 use ElementorPro\Base\Module_Base;
-use ElementorPro\Classes\Utils;
+use ElementorPro\Core\Utils;
 use ElementorPro\Modules\ThemeBuilder\Classes;
 use ElementorPro\Modules\ThemeBuilder\Documents\Single;
 use ElementorPro\Modules\ThemeBuilder\Documents\Theme_Document;
@@ -106,17 +106,6 @@ class Module extends Module_Base {
 	}
 
 	public function localize_settings( $settings ) {
-		$post_id = get_the_ID();
-		$document = $this->get_document( $post_id );
-
-		if ( ! $document ) {
-			return $settings;
-		}
-
-		$types_manager = $this->get_types_manager();
-		$conditions_manager = $this->get_conditions_manager();
-		$template_type = $this->get_template_type( $post_id );
-
 		$settings = array_replace_recursive( $settings, [
 			'i18n' => [
 				'publish_settings' => __( 'Publish Settings', 'elementor-pro' ),
@@ -124,11 +113,28 @@ class Module extends Module_Base {
 				'display_conditions' => __( 'Display Conditions', 'elementor-pro' ),
 				'choose' => __( 'Choose', 'elementor-pro' ),
 				'add_condition' => __( 'Add Condition', 'elementor-pro' ),
-				'conditions_title' => sprintf( __( 'Where Do You Want to Display Your %s?', 'elementor-pro' ), $document->get_post_type_title() ),
-				'conditions_description' => sprintf( __( 'Set the conditions that determine where your %s is used throughout your site.', 'elementor-pro' ), $document->get_post_type_title() ) . '<br>' . __( 'For example, choose \'Entire Site\' to display the template across your site.', 'elementor-pro' ),
+				'conditions_title' => __( 'Where Do You Want to Display Your %s?', 'elementor-pro' ),
+				'conditions_description' => __( 'Set the conditions that determine where your %s is used throughout your site.', 'elementor-pro' ) . '<br>' . __( 'For example, choose \'Entire Site\' to display the template across your site.', 'elementor-pro' ),
 				'conditions_publish_screen_description' => __( 'Apply current template to these pages.', 'elementor-pro' ),
 				'save_and_close' => __( 'Save & Close', 'elementor-pro' ),
 			],
+		] );
+
+		return $settings;
+	}
+
+	public function document_config( $config, $post_id ) {
+		$document = $this->get_document( $post_id );
+
+		if ( ! $document ) {
+			return $config;
+		}
+
+		$types_manager = $this->get_types_manager();
+		$conditions_manager = $this->get_conditions_manager();
+		$template_type = $this->get_template_type( $post_id );
+
+		$config = array_replace_recursive( $config, [
 			'theme_builder' => [
 				'types' => $types_manager->get_types_config(),
 				'conditions' => $conditions_manager->get_conditions_config(),
@@ -142,7 +148,7 @@ class Module extends Module_Base {
 			],
 		] );
 
-		return $settings;
+		return $config;
 	}
 
 	public function register_controls() {
@@ -219,9 +225,18 @@ class Module extends Module_Base {
 
 					foreach ( $post_types as $post_type => $label ) {
 						$doc_type = Plugin::elementor()->documents->get_document_type( $post_type );
-						$doc_name = ( new $doc_type() )->get_name();
+						$doc_class = new $doc_type();
 
-						if ( 'post' === $doc_name || 'page' === $doc_name ) {
+						// New: Core >=2.7.0
+						$is_base_page = class_exists( '\Elementor\Core\DocumentTypes\PageBase' ) && $doc_class instanceof \Elementor\Core\DocumentTypes\PageBase;
+
+						// Old: Core < 2.7.0. TODO: Remove on 2.7.0.
+						if ( ! $is_base_page ) {
+							$doc_name = $doc_class->get_name();
+							$is_base_page = in_array( $doc_name, [ 'post', 'page', 'wp-post', 'wp-page' ] );
+						}
+
+						if ( $is_base_page ) {
 							$post_type_object = get_post_type_object( $post_type );
 							echo sprintf( '<option value="%1$s">%2$s</option>', $post_type, $post_type_object->labels->singular_name );
 						}
@@ -284,7 +299,7 @@ class Module extends Module_Base {
 
 		$categories['create']['items']['theme-template'] = [
 			'title' => __( 'Add New Theme Template', 'elementor-pro' ),
-			'icon' => 'plus-circle',
+			'icon' => 'plus-circle-o',
 			'url' => $this->get_admin_templates_url() . '#add_new',
 			'keywords' => [ 'template', 'theme', 'new', 'create' ],
 		];
@@ -330,6 +345,7 @@ class Module extends Module_Base {
 		// Editor
 		add_action( 'elementor/editor/init', [ $this, 'on_elementor_editor_init' ] );
 		add_filter( 'elementor_pro/editor/localize_settings', [ $this, 'localize_settings' ] );
+		add_filter( 'elementor/document/config', [ $this, 'document_config' ], 10, 2 );
 
 		// Admin
 		add_action( 'admin_head', [ $this, 'admin_head' ] );

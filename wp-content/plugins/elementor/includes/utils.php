@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Utils {
 
+	const DEPRECATION_RANGE = 0.4;
+
 	/**
 	 * Is ajax.
 	 *
@@ -615,5 +617,114 @@ class Utils {
 		$script_data = 'var ' . $js_var . ' = ' . $config . ';';
 
 		wp_add_inline_script( $handle, $script_data, 'before' );
+	}
+
+	public static function handle_deprecation( $item, $version, $replacement = null ) {
+		preg_match( '/^[0-9]+\.[0-9]+/', ELEMENTOR_VERSION, $current_version );
+
+		$current_version_as_float = (float) $current_version[0];
+
+		preg_match( '/^[0-9]+\.[0-9]+/', $version, $alias_version );
+
+		$alias_version_as_float = (float) $alias_version[0];
+
+		if ( round( $current_version_as_float - $alias_version_as_float, 1 ) >= self::DEPRECATION_RANGE ) {
+			_deprecated_file( $item, $version, $replacement );
+		}
+	}
+
+	/**
+	 * Checks a control value for being empty, including a string of '0' not covered by PHP's empty().
+	 *
+	 * @param mixed $source
+	 * @param bool|string $key
+	 *
+	 * @return bool
+	 */
+	public static function is_empty( $source, $key = false ) {
+		if ( is_array( $source ) ) {
+			if ( ! isset( $source[ $key ] ) ) {
+				return true;
+			}
+
+			$source = $source[ $key ];
+		}
+
+		return '0' !== $source && empty( $source );
+	}
+
+	public static function has_pro() {
+		return defined( 'ELEMENTOR_PRO_VERSION' );
+	}
+
+	/**
+	 * Convert HTMLEntities to UTF-8 characters
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	public static function urlencode_html_entities( $string ) {
+		$entities_dictionary = [
+			'&#145;' => "'", // Opening single quote
+			'&#146;' => "'", // Closing single quote
+			'&#147;' => '"', // Closing double quote
+			'&#148;' => '"', // Opening double quote
+			'&#8216;' => "'", // Closing single quote
+			'&#8217;' => "'", // Opening single quote
+			'&#8218;' => "'", // Single low quote
+			'&#8220;' => '"', // Closing double quote
+			'&#8221;' => '"', // Opening double quote
+			'&#8222;' => '"', // Double low quote
+		];
+
+		// Decode decimal entities
+		$string = str_replace( array_keys( $entities_dictionary ), array_values( $entities_dictionary ), $string );
+
+		return rawurlencode( html_entity_decode( $string, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+	}
+
+	/**
+	 * Parse attributes that come as a string of comma-delimited key|value pairs.
+	 * Removes Javascript events and unescaped `href` attributes.
+	 *
+	 * @param string $attributes_string
+	 *
+	 * @param string $delimiter Default comma `,`.
+	 *
+	 * @return array
+	 */
+	public static function parse_custom_attributes( $attributes_string, $delimiter = ',' ) {
+		$attributes = explode( $delimiter, $attributes_string );
+		$result = [];
+
+		foreach ( $attributes as $attribute ) {
+			$attr_key_value = explode( '|', $attribute );
+
+			$attr_key = mb_strtolower( $attr_key_value[0] );
+
+			// Remove any not allowed characters.
+			preg_match( '/[-_a-z0-9]+/', $attr_key, $attr_key_matches );
+
+			if ( empty( $attr_key_matches[0] ) ) {
+				continue;
+			}
+
+			$attr_key = $attr_key_matches[0];
+
+			// Avoid Javascript events and unescaped href.
+			if ( 'href' === $attr_key || 'on' === substr( $attr_key, 0, 2 ) ) {
+				continue;
+			}
+
+			if ( isset( $attr_key_value[1] ) ) {
+				$attr_value = trim( $attr_key_value[1] );
+			} else {
+				$attr_value = '';
+			}
+
+			$result[ $attr_key ] = $attr_value;
+		}
+
+		return $result;
 	}
 }

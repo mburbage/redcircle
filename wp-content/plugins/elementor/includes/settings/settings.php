@@ -70,6 +70,10 @@ class Settings extends Settings_Page {
 
 		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // WPCS: override ok.
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		add_menu_page(
 			__( 'Elementor', 'elementor' ),
 			__( 'Elementor', 'elementor' ),
@@ -136,6 +140,15 @@ class Settings extends Settings_Page {
 			'manage_options',
 			'elementor_custom_fonts',
 			[ $this, 'elementor_custom_fonts' ]
+		);
+
+		add_submenu_page(
+			self::PAGE_ID,
+			__( 'Custom Icons', 'elementor' ),
+			__( 'Custom Icons', 'elementor' ),
+			'manage_options',
+			'elementor_custom_icons',
+			[ $this, 'elementor_custom_icons' ]
 		);
 
 		add_submenu_page(
@@ -242,11 +255,11 @@ class Settings extends Settings_Page {
 					<div class="e-getting-started__content">
 						<div class="e-getting-started__content--narrow">
 							<h2><?php echo __( 'Welcome to Elementor', 'elementor' ); ?></h2>
-							<p><?php echo __( 'We recommend you watch this 2 minute getting started video, and then try the editor yourself by dragging and dropping elements to create your first page.', 'elementor' ); ?></p>
+							<p><?php echo __( 'Get introduced to Elementor by watching our "Getting Started" video series. It will guide you through the steps needed to create your website. Then click to create your first page.', 'elementor' ); ?></p>
 						</div>
 
 						<div class="e-getting-started__video">
-							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/nZlgNmbC-Cw?rel=0&amp;controls=1&amp;modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							<iframe width="620" height="350" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLZyp9H25CboH8b_wsNyOmstckiOE8aUBg&amp;controls=1&amp;modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 						</div>
 
 						<div class="e-getting-started__actions e-getting-started__content--narrow">
@@ -254,7 +267,7 @@ class Settings extends Settings_Page {
 							<a href="<?php echo esc_url( Utils::get_create_new_post_url( $create_new_cpt ) ); ?>" class="button button-primary button-hero"><?php echo esc_html( $create_new_label ); ?></a>
 							<?php endif; ?>
 
-							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Get the Full Guide', 'elementor' ); ?></a>
+							<a href="https://go.elementor.com/getting-started/" target="_blank" class="button button-secondary button-hero"><?php echo __( 'Watch the Full Guide', 'elementor' ); ?></a>
 						</div>
 					</div>
 				</div>
@@ -275,10 +288,31 @@ class Settings extends Settings_Page {
 		?>
 		<div class="wrap">
 			<div class="elementor-blank_state">
-				<i class="eicon-nerd-chuckle"></i>
+				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
 				<h2><?php echo __( 'Add Your Custom Fonts', 'elementor' ); ?></h2>
 				<p><?php echo __( 'Custom Fonts allows you to add your self-hosted fonts and use them on your Elementor projects to create a unique brand language.', 'elementor' ); ?></p>
 				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-fonts&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
+			</div>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	/**
+	 * Display settings page.
+	 *
+	 * Output the content for the custom icons page.
+	 *
+	 * @since 2.8.0
+	 * @access public
+	 */
+	public function elementor_custom_icons() {
+		?>
+		<div class="wrap">
+			<div class="elementor-blank_state">
+				<img src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro-wp-dashboard.svg'; ?>" />
+				<h2><?php echo __( 'Add Your Custom Icons', 'elementor' ); ?></h2>
+				<p><?php echo __( 'Don\'t rely solely on the FontAwesome icons everyone else is using! Differentiate your website and your style with custom icons you can upload from your favorite icons source.', 'elementor' ); ?></p>
+				<a class="elementor-button elementor-button-default elementor-button-go-pro" target="_blank" href="<?php echo Utils::get_pro_link( 'https://elementor.com/pro/?utm_source=wp-custom-icons&utm_campaign=gopro&utm_medium=wp-dash' ); ?>"><?php echo __( 'Go Pro', 'elementor' ); ?></a>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -439,12 +473,12 @@ class Settings extends Settings_Page {
 						'label' => __( 'Improve Elementor', 'elementor' ),
 						'fields' => [
 							'allow_tracking' => [
-								'label' => __( 'Usage Data Tracking', 'elementor' ),
+								'label' => __( 'Usage Data Sharing', 'elementor' ),
 								'field_args' => [
 									'type' => 'checkbox',
 									'value' => 'yes',
 									'default' => '',
-									'sub_desc' => __( 'Opt-in to our anonymous plugin data collection and to updates. We guarantee no sensitive data is collected.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
+									'sub_desc' => __( 'Become a super contributor by opting in to share non-sensitive plugin data and to get our updates.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', __( 'Learn more.', 'elementor' ) ),
 								],
 								'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 							],
@@ -589,20 +623,8 @@ class Settings extends Settings_Page {
 									'desc' => __( 'For troubleshooting server configuration conflicts.', 'elementor' ),
 								],
 							],
-							'edit_buttons' => [
-								'label' => __( 'Editing Handles', 'elementor' ),
-								'field_args' => [
-									'type' => 'select',
-									'std' => '',
-									'options' => [
-										'' => __( 'Hide', 'elementor' ),
-										'on' => __( 'Show', 'elementor' ),
-									],
-									'desc' => __( 'Show editing handles when hovering over the element edit button', 'elementor' ),
-								],
-							],
-							'allow_svg' => [
-								'label' => __( 'Enable SVG Uploads', 'elementor' ),
+							'unfiltered_files_upload' => [
+								'label' => __( 'Enable Unfiltered Files Uploads', 'elementor' ),
 								'field_args' => [
 									'type' => 'select',
 									'std' => '',
@@ -610,7 +632,7 @@ class Settings extends Settings_Page {
 										'' => __( 'Disable', 'elementor' ),
 										1 => __( 'Enable', 'elementor' ),
 									],
-									'desc' => __( 'Please note! Allowing uploads of any files (SVG included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the SVG files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
+									'desc' => __( 'Please note! Allowing uploads of any files (SVG & JSON included) is a potential security risk.', 'elementor' ) . '<br>' . __( 'Elementor will try to sanitize the unfiltered files, removing potential malicious code and scripts.', 'elementor' ) . '<br>' . __( 'We recommend you only enable this feature if you understand the security risks involved.', 'elementor' ),
 								],
 							],
 						],
@@ -673,9 +695,11 @@ class Settings extends Settings_Page {
 	private function maybe_remove_all_admin_notices() {
 		$elementor_pages = [
 			'elementor-getting-started',
-			'elementor-role-manager',
 			'elementor_custom_fonts',
+			'elementor_custom_icons',
 			'elementor-license',
+			'popup_templates',
+			'theme_templates',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {

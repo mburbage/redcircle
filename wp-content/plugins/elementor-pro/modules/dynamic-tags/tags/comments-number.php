@@ -2,7 +2,7 @@
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\DynamicTags\Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,7 +24,10 @@ class Comments_Number extends Tag {
 	}
 
 	public function get_categories() {
-		return [ Module::TEXT_CATEGORY ];
+		return [
+			Module::TEXT_CATEGORY,
+			Module::NUMBER_CATEGORY,
+		];
 	}
 
 	protected function _register_controls() {

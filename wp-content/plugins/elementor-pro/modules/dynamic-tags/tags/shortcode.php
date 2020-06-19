@@ -2,7 +2,7 @@
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\DynamicTags\Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,6 +25,7 @@ class Shortcode extends Tag {
 	public function get_categories() {
 		return [
 			Module::TEXT_CATEGORY,
+			Module::NUMBER_CATEGORY,
 			Module::URL_CATEGORY,
 			Module::POST_META_CATEGORY,
 		];

@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Core\Schemes\Manager as Schemes_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -208,6 +209,16 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * @since 2.9.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_editable() {
+		return true;
+	}
+
+	/**
 	 * Get items.
 	 *
 	 * Utility method that receives an array with a needle and returns all the
@@ -225,7 +236,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed The whole haystack or the needle from the haystack when requested.
 	 */
 	protected static function _get_items( array $haystack, $needle = null ) {
-		// _deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_items()' );
+		 _deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_items()' );
 
 		if ( $needle ) {
 			return isset( $haystack[ $needle ] ) ? $haystack[ $needle ] : null;
@@ -956,7 +967,13 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function get_config() {
 		if ( null === $this->config ) {
-			$this->config = $this->_get_initial_config();
+			// TODO: This is for backwards compatibility starting from 2.9.0
+			// This if statement should be removed when the method is hard-deprecated
+			if ( method_exists( $this, '_get_initial_config' ) ) {
+				$this->config = $this->_get_initial_config();
+			} else {
+				$this->config = $this->get_initial_config();
+			}
 		}
 
 		return $this->config;
@@ -1153,7 +1170,7 @@ abstract class Controls_Stack extends Base_Object {
 				continue;
 			}
 
-			if ( 'repeater' === $control_obj->get_type() ) {
+			if ( $control_obj instanceof Control_Repeater ) {
 				foreach ( $settings[ $control_name ] as & $field ) {
 					$field = $this->parse_dynamic_settings( $field, $control['fields'], $field );
 				}
@@ -1161,11 +1178,19 @@ abstract class Controls_Stack extends Base_Object {
 				continue;
 			}
 
-			if ( empty( $control['dynamic'] ) || ! isset( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
-				continue;
+			$dynamic_settings = $control_obj->get_settings( 'dynamic' );
+
+			if ( ! $dynamic_settings ) {
+				$dynamic_settings = [];
 			}
 
-			$dynamic_settings = array_merge( $control_obj->get_settings( 'dynamic' ), $control['dynamic'] );
+			if ( ! empty( $control['dynamic'] ) ) {
+				$dynamic_settings = array_merge( $dynamic_settings, $control['dynamic'] );
+			}
+
+			if ( empty( $dynamic_settings ) || ! isset( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
+				continue;
+			}
 
 			if ( ! empty( $dynamic_settings['active'] ) && ! empty( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ] ) ) {
 				$parsed_value = $control_obj->parse_tags( $all_settings[ Manager::DYNAMIC_SETTING_KEY ][ $control_name ], $dynamic_settings );
@@ -1194,7 +1219,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Frontend settings.
 	 */
 	public function get_frontend_settings() {
-		$frontend_settings = array_intersect_key( $this->get_active_settings(), array_flip( $this->get_frontend_settings_keys() ) );
+		$frontend_settings = array_intersect_key( $this->get_settings_for_display(), array_flip( $this->get_frontend_settings_keys() ) );
 
 		foreach ( $frontend_settings as $key => $setting ) {
 			if ( in_array( $setting, [ null, '' ], true ) ) {
@@ -1640,7 +1665,13 @@ abstract class Controls_Stack extends Base_Object {
 	public function print_template() {
 		ob_start();
 
-		$this->_content_template();
+		// TODO: This is for backwards compatibility starting from 2.9.0
+		// This `if` statement should be removed when the method is removed
+		if ( method_exists( $this, '_content_template' ) ) {
+			$this->_content_template();
+		} else {
+			$this->content_template();
+		}
 
 		$template_content = ob_get_clean();
 
@@ -1790,24 +1821,20 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
-	 * Get parsed settings.
+	 * Get initial config.
 	 *
-	 * Retrieve the parsed settings for all the controls that represent them.
-	 * The parser set default values and process the settings.
+	 * Retrieve the current element initial configuration - controls list and
+	 * the tabs assigned to the control.
 	 *
-	 * Classes that extend `Controls_Stack` can add new process to the settings
-	 * parser.
-	 *
-	 * @since 1.4.0
-	 * @deprecated 2.3.0 Use `Controls_Stack::get_init_settings()` instead
+	 * @since 2.9.0
 	 * @access protected
 	 *
-	 * @return array Parsed settings.
+	 * @return array The initial config.
 	 */
-	protected function _get_parsed_settings() {
-		_deprecated_function( __METHOD__, '2.3.0', __CLASS__ . '::get_init_settings()' );
-
-		return $this->get_init_settings();
+	protected function get_initial_config() {
+		return [
+			'controls' => $this->get_controls(),
+		];
 	}
 
 	/**
@@ -1817,14 +1844,15 @@ abstract class Controls_Stack extends Base_Object {
 	 * the tabs assigned to the control.
 	 *
 	 * @since 1.4.0
+	 * @deprecated 2.9.0 use `get_initial_config()` instead
 	 * @access protected
 	 *
 	 * @return array The initial config.
 	 */
 	protected function _get_initial_config() {
-		return [
-			'controls' => $this->get_controls(),
-		];
+		// _deprecated_function( __METHOD__, '2.9.0', 'get_initial_config' );
+
+		return $this->get_initial_config();
 	}
 
 	/**
@@ -1881,10 +1909,25 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Used to generate the live preview, using a Backbone JavaScript template.
 	 *
-	 * @since 2.0.0
+	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function _content_template() {}
+	protected function content_template() {}
+
+	/**
+	 * Render element output in the editor.
+	 *
+	 * Used to generate the live preview, using a Backbone JavaScript template.
+	 *
+	 * @since 2.0.0
+	 * @deprecated 2.9.0 use `content_template()` instead
+	 * @access protected
+	 */
+	protected function _content_template() {
+		// _deprecated_function( __METHOD__, '2.9.0', 'content_template' );
+
+		$this->content_template();
+	}
 
 	/**
 	 * Initialize controls.
@@ -1897,7 +1940,29 @@ abstract class Controls_Stack extends Base_Object {
 	protected function init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
-		$this->_register_controls();
+		// TODO: This is for backwards compatibility starting from 2.9.0
+		// This `if` statement should be removed when the method is removed
+		if ( method_exists( $this, '_register_controls' ) ) {
+			$this->_register_controls();
+		} else {
+			$this->register_controls();
+		}
+	}
+
+	/**
+	 * Initialize the class.
+	 *
+	 * Set the raw data, the ID and the parsed settings.
+	 *
+	 * @since 2.9.0
+	 * @access protected
+	 *
+	 * @param array $data Initial data.
+	 */
+	protected function init( $data ) {
+		$this->data = array_merge( $this->get_default_data(), $data );
+
+		$this->id = $data['id'];
 	}
 
 	/**
@@ -1906,14 +1971,15 @@ abstract class Controls_Stack extends Base_Object {
 	 * Set the raw data, the ID and the parsed settings.
 	 *
 	 * @since 1.4.0
+	 * @deprecated 2.9.0 use `init()` instead
 	 * @access protected
 	 *
 	 * @param array $data Initial data.
 	 */
 	protected function _init( $data ) {
-		$this->data = array_merge( $this->get_default_data(), $data );
+		// _deprecated_function( __METHOD__, '2.9.0', 'init' );
 
-		$this->id = $data['id'];
+		$this->init( $data );
 	}
 
 	/**
@@ -1936,7 +2002,9 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		foreach ( $controls as $control ) {
-			if ( 'repeater' === $control['type'] ) {
+			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
+
+			if ( $control_obj instanceof Control_Repeater ) {
 				if ( empty( $settings[ $control['name'] ] ) ) {
 					continue;
 				}
@@ -1981,7 +2049,13 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
-			$this->_init( $data );
+			// TODO: This is for backwards compatibility starting from 2.9.0
+			// This if statement should be removed when the method is hard-deprecated
+			if ( method_exists( $this, '_init' ) ) {
+				$this->_init( $data );
+			} else {
+				$this->init( $data );
+			}
 		}
 	}
 }

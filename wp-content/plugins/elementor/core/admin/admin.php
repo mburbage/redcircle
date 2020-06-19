@@ -221,6 +221,7 @@ class Admin extends App {
 		if ( User::is_current_user_can_edit( $post->ID ) && Plugin::$instance->db->is_built_with_elementor( $post->ID ) ) {
 			$post_states['elementor'] = __( 'Elementor', 'elementor' );
 		}
+
 		return $post_states;
 	}
 
@@ -304,100 +305,6 @@ class Admin extends App {
 		}
 
 		return $plugin_meta;
-	}
-
-	/**
-	 * Admin notices.
-	 *
-	 * Add Elementor notices to WordPress admin screen.
-	 *
-	 * Fired by `admin_notices` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function admin_notices() {
-		$upgrade_notice = Api::get_upgrade_notice();
-		if ( empty( $upgrade_notice ) ) {
-			return;
-		}
-
-		if ( ! current_user_can( 'update_plugins' ) ) {
-			return;
-		}
-
-		if ( ! in_array( get_current_screen()->id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
-			return;
-		}
-
-		// Check if have any upgrades.
-		$update_plugins = get_site_transient( 'update_plugins' );
-
-		$has_remote_update_package = ! ( empty( $update_plugins ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ] ) || empty( $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ]->package ) );
-
-		if ( ! $has_remote_update_package && empty( $upgrade_notice['update_link'] ) ) {
-			return;
-		}
-
-		if ( $has_remote_update_package ) {
-			$product = $update_plugins->response[ ELEMENTOR_PLUGIN_BASE ];
-
-			$details_url = self_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $product->slug . '&section=changelog&TB_iframe=true&width=600&height=800' );
-			$upgrade_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . ELEMENTOR_PLUGIN_BASE ), 'upgrade-plugin_' . ELEMENTOR_PLUGIN_BASE );
-			$new_version = $product->new_version;
-		} else {
-			$upgrade_url = $upgrade_notice['update_link'];
-			$details_url = $upgrade_url;
-
-			$new_version = $upgrade_notice['version'];
-		}
-
-		// Check if have upgrade notices to show.
-		if ( version_compare( ELEMENTOR_VERSION, $upgrade_notice['version'], '>=' ) ) {
-			return;
-		}
-
-		$notice_id = 'upgrade_notice_' . $upgrade_notice['version'];
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
-			return;
-		}
-		?>
-		<div class="notice updated is-dismissible elementor-message elementor-message-dismissed" data-notice_id="<?php echo esc_attr( $notice_id ); ?>">
-			<div class="elementor-message-inner">
-				<div class="elementor-message-icon">
-					<div class="e-logo-wrapper">
-						<i class="eicon-elementor" aria-hidden="true"></i>
-					</div>
-				</div>
-				<div class="elementor-message-content">
-					<strong><?php echo __( 'Update Notification', 'elementor' ); ?></strong>
-					<p>
-						<?php
-						printf(
-							/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text */
-							__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
-							esc_url( $details_url ),
-							esc_attr( sprintf(
-								/* translators: %s: Elementor version */
-								__( 'View Elementor version %s details', 'elementor' ),
-								$new_version
-							) ),
-							$new_version,
-							esc_url( $upgrade_url ),
-							esc_attr( __( 'Update Elementor Now', 'elementor' ) )
-						);
-						?>
-					</p>
-				</div>
-				<div class="elementor-message-action">
-					<a class="button elementor-button" href="<?php echo $upgrade_url; ?>">
-						<i class="dashicons dashicons-update" aria-hidden="true"></i>
-						<?php echo __( 'Update Now', 'elementor' ); ?>
-					</a>
-				</div>
-			</div>
-		</div>
-		<?php
 	}
 
 	/**
@@ -627,7 +534,7 @@ class Admin extends App {
 		if ( empty( $_GET['template_type'] ) ) {
 			$type = 'post';
 		} else {
-			$type = $_GET['template_type']; // XSS ok.
+			$type = sanitize_text_field( $_GET['template_type'] );
 		}
 
 		$post_data = isset( $_GET['post_data'] ) ? $_GET['post_data'] : [];
@@ -721,15 +628,7 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function init_beta_tester( $current_screen ) {
-		$beta_tester_email = get_user_meta( get_current_user_id(), User::BETA_TESTER_META_KEY, true );
-
-		if ( 'yes' !== get_option( 'elementor_beta', 'no' ) || $beta_tester_email ) {
-			return;
-		}
-
-		$all_introductions = User::get_introduction_meta();
-		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
-		if ( ( ( 'toplevel_page_elementor' === $current_screen->base ) && ! $beta_tester_signup_dismissed ) || 'elementor_page_elementor-tools' === $current_screen->id ) {
+		if ( ( 'toplevel_page_elementor' === $current_screen->base ) || 'elementor_page_elementor-tools' === $current_screen->id ) {
 			add_action( 'admin_head', [ $this, 'add_beta_tester_template' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_beta_tester_scripts' ] );
 		}
@@ -747,8 +646,8 @@ class Admin extends App {
 		Plugin::$instance->init_common();
 
 		$this->add_component( 'feedback', new Feedback() );
-
 		$this->add_component( 'canary-deployment', new Canary_Deployment() );
+		$this->add_component( 'admin-notices', new Admin_Notices() );
 
 		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
@@ -763,7 +662,6 @@ class Admin extends App {
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
 		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 
-		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 
@@ -783,9 +681,14 @@ class Admin extends App {
 	 * @access protected
 	 */
 	protected function get_init_settings() {
+		$beta_tester_email = get_user_meta( get_current_user_id(), User::BETA_TESTER_META_KEY, true );
+		$elementor_beta = get_option( 'elementor_beta', 'no' );
+		$all_introductions = User::get_introduction_meta();
+		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
+
 		$settings = [
 			'home_url' => home_url(),
-			'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
+			'settings_url' => Settings::get_url(),
 			'i18n' => [
 				'rollback_confirm' => __( 'Are you sure you want to reinstall previous version?', 'elementor' ),
 				'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'elementor' ),
@@ -800,7 +703,12 @@ class Admin extends App {
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
 			],
-
+			'beta_tester' => [
+				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
+				'has_email' => $beta_tester_email,
+				'option_enabled' => 'no' !== $elementor_beta,
+				'signup_dismissed' => $beta_tester_signup_dismissed,
+			],
 		];
 
 		return apply_filters( 'elementor/admin/localize_settings', $settings );

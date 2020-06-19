@@ -5,7 +5,7 @@
  * @package Yoast\YoastSEO
  */
 
-namespace Yoast\WP\Free\Loggers;
+namespace Yoast\WP\SEO\Loggers;
 
 use YoastSEO_Vendor\Ruckusing_Util_Logger;
 
@@ -15,6 +15,8 @@ use YoastSEO_Vendor\Ruckusing_Util_Logger;
 class Migration_Logger extends Ruckusing_Util_Logger {
 
 	/**
+	 * The logger object.
+	 *
 	 * @var Logger
 	 */
 	protected $logger;

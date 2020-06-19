@@ -1,5 +1,5 @@
 <?php exit; ?>{
-    "version": "0.9.7.5",
+    "version": "0.11.0",
     "cluster.messagebus.debug": false,
     "cluster.messagebus.enabled": false,
     "cluster.messagebus.sns.region": "",
@@ -20,6 +20,7 @@
     ],
     "dbcache.memcached.username": "",
     "dbcache.memcached.password": "",
+    "dbcache.memcached.binary_protocol": true,
     "dbcache.redis.persistent": true,
     "dbcache.redis.servers": [
         "127.0.0.1:6379"
@@ -56,6 +57,33 @@
         "\\bsql_calc_found_rows\\b",
         "\\bfound_rows\\(\\)"
     ],
+    "lazyload.enabled": false,
+    "lazyload.process_img": true,
+    "lazyload.process_background": true,
+    "lazyload.exclude": [
+        "avia-bg-style-fixed",
+        "data-bgposition=",
+        "data-envira-src=",
+        "data-large_image=",
+        "data-lazy-original=",
+        "data-lazy-src=",
+        "data-lazyload=",
+        "data-lazysrc=",
+        "data-no-lazy=",
+        "data-src=",
+        "data-srcset=",
+        "fullurl=",
+        "lazy-slider-img=",
+        "loading=\"eager\"",
+        "no-lazy",
+        "rev-slidebg",
+        "soliloquy-image",
+        "swatch-img",
+        "w3-total-cache",
+        "woocommerce\/assets\/images\/placeholder.png",
+        "wpcf7_captcha"
+    ],
+    "lazyload.embed_method": "async_head",
     "objectcache.configuration_overloaded": false,
     "objectcache.enabled": "0",
     "objectcache.debug": false,
@@ -71,6 +99,7 @@
     "objectcache.memcached.aws_autodiscovery": false,
     "objectcache.memcached.username": "",
     "objectcache.memcached.password": "",
+    "objectcache.memcached.binary_protocol": true,
     "objectcache.redis.persistent": true,
     "objectcache.redis.servers": [
         "127.0.0.1:6379"
@@ -113,6 +142,7 @@
     "pgcache.memcached.aws_autodiscovery": false,
     "pgcache.memcached.username": "",
     "pgcache.memcached.password": "",
+    "pgcache.memcached.binary_protocol": true,
     "pgcache.redis.persistent": true,
     "pgcache.redis.servers": [
         "127.0.0.1:6379"
@@ -218,13 +248,20 @@
         }
     },
     "stats.enabled": "0",
+    "stats.slot_seconds": 60,
+    "stats.slots_count": 60,
+    "stats.cpu.enabled": false,
+    "stats.access_log.enabled": false,
+    "stats.access_log.filename": "",
+    "stats.access_log.format": "%h %l %u %t \\\"%r\\\" %>s %O \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\"",
+    "stats.access_log.webserver": "apache",
     "minify.configuration_overloaded": false,
     "minify.enabled": "1",
     "minify.auto": "0",
     "minify.debug": false,
     "minify.engine": "file",
     "minify.error.notification": "",
-    "minify.file.gc": "86400",
+    "minify.file.gc": 86400,
     "minify.file.nfs": false,
     "minify.file.locking": false,
     "minify.memcached.servers": [
@@ -234,33 +271,34 @@
     "minify.memcached.aws_autodiscovery": false,
     "minify.memcached.username": "",
     "minify.memcached.password": "",
+    "minify.memcached.binary_protocol": true,
     "minify.redis.persistent": true,
     "minify.redis.servers": [
         "127.0.0.1:6379"
     ],
     "minify.redis.password": "",
     "minify.redis.dbid": 0,
-    "minify.rewrite": "1",
+    "minify.rewrite": true,
     "minify.options": [],
     "minify.symlinks": [],
-    "minify.lifetime": "86400",
+    "minify.lifetime": 86400,
     "minify.upload": true,
-    "minify.html.enable": "0",
+    "minify.html.enable": false,
     "minify.html.engine": "html",
-    "minify.html.reject.feed": "0",
-    "minify.html.inline.css": "0",
-    "minify.html.inline.js": "0",
-    "minify.html.strip.crlf": "0",
+    "minify.html.reject.feed": false,
+    "minify.html.inline.css": false,
+    "minify.html.inline.js": false,
+    "minify.html.strip.crlf": false,
     "minify.html.comments.ignore": [
         "google_ad_",
         "RSPEAK_"
     ],
-    "minify.css.combine": "0",
-    "minify.css.enable": "1",
+    "minify.css.combine": false,
+    "minify.css.enable": true,
     "minify.css.engine": "css",
-    "minify.css.http2push": "0",
-    "minify.css.strip.comments": "0",
-    "minify.css.strip.crlf": "0",
+    "minify.css.http2push": false,
+    "minify.css.strip.comments": false,
+    "minify.css.strip.crlf": false,
     "minify.css.embed": false,
     "minify.css.imports": "process",
     "minify.css.groups": {
@@ -269,26 +307,63 @@
                 "include": {
                     "files": [
                         "http:\/\/redcircle\/wp-includes\/css\/dist\/block-library\/style.min.css?ver=5.2.2",
-                        "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/css\/settings.css?ver=5.4.8.3",
                         "http:\/\/redcircle\/wp-content\/themes\/FoundationPress\/dist\/assets\/css\/app.css?ver=2.10.4",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/eicons\/css\/elementor-icons.min.css?ver=5.4.0",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/animations\/animations.min.css?ver=2.7.4",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/css\/frontend.min.css?ver=2.7.4",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/css\/frontend.min.css?ver=2.7.2",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/global.css?ver=1571937118",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-484.css?ver=1572875283",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-160.css?ver=1572875283",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-24.css?ver=1572875283",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-123.css?ver=1572875283",
+                        "https:\/\/fonts.googleapis.com\/css?family=Montserrat%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRoboto%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&#038;ver=5.2.2",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/fontawesome.min.css?ver=5.9.0",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/solid.min.css?ver=5.9.0",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/regular.min.css?ver=5.9.0",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/brands.min.css?ver=5.9.0",
+                        "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/css\/settings.css?ver=5.4.8.3",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/eicons\/css\/elementor-icons.min.css?ver=5.3.0",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/animations\/animations.min.css?ver=2.6.8",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/css\/frontend.min.css?ver=2.6.8",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/css\/frontend.min.css?ver=2.6.4",
                         "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/global.css?ver=1566835448",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-160.css?ver=1566936868",
                         "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-24.css?ver=1566833668",
-                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-123.css?ver=1566837233",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-123.css?ver=1566938602",
                         "https:\/\/fonts.googleapis.com\/css?family=Roboto%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRoboto+Slab%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&#038;ver=5.2.2",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/fontawesome.min.css?ver=5.9.0",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/solid.min.css?ver=5.9.0",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/regular.min.css?ver=5.9.0",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/font-awesome\/css\/brands.min.css?ver=5.9.0"
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-123.css?ver=1566837233"
+                    ]
+                }
+            },
+            "archive": {
+                "include": {
+                    "files": [
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-531.css?ver=1574883616"
+                    ]
+                }
+            },
+            "search": {
+                "include": {
+                    "files": [
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-531.css?ver=1574883616"
+                    ]
+                }
+            },
+            "single": {
+                "include": {
+                    "files": [
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-1.css?ver=1573047517",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-242.css?ver=1572878472",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-1.css?ver=1568563306",
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-242.css?ver=1568562570"
                     ]
                 }
             },
             "homepage-full-width": {
                 "include": {
                     "files": [
+                        "http:\/\/redcircle\/wp-content\/uploads\/elementor\/css\/post-164.css?ver=1566941551",
                         "http:\/\/redcircle\/wp-content\/plugins\/js_composer\/assets\/css\/js_composer.min.css?ver=6.0.1",
                         "http:\/\/fonts.googleapis.com\/css?family=Montserrat:500"
                     ]
@@ -296,37 +371,68 @@
             }
         }
     },
-    "minify.js.http2push": "0",
-    "minify.js.enable": "1",
+    "minify.js.http2push": false,
+    "minify.js.enable": true,
     "minify.js.engine": "js",
-    "minify.js.combine.header": "0",
-    "minify.js.header.embed_type": "blocking",
-    "minify.js.combine.body": "0",
+    "minify.js.combine.header": false,
+    "minify.js.header.embed_type": "nb-defer",
+    "minify.js.combine.body": false,
     "minify.js.body.embed_type": "blocking",
-    "minify.js.combine.footer": "0",
+    "minify.js.combine.footer": false,
     "minify.js.footer.embed_type": "blocking",
-    "minify.js.strip.comments": "0",
-    "minify.js.strip.crlf": "0",
+    "minify.js.strip.comments": false,
+    "minify.js.strip.crlf": false,
     "minify.js.groups": {
         "fdd88": {
             "default": {
                 "include": {
                     "files": [
-                        "http:\/\/redcircle\/wp-content\/plugins\/google-analytics-for-wordpress\/assets\/js\/frontend.min.js?ver=7.7.1",
-                        "https:\/\/ajax.googleapis.com\/ajax\/libs\/jquery\/3.2.1\/jquery.min.js?ver=3.2.1",
-                        "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/js\/jquery.themepunch.tools.min.js?ver=5.4.8.3",
-                        "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/js\/jquery.themepunch.revolution.min.js?ver=5.4.8.3",
+                        "http:\/\/redcircle\/wp-content\/plugins\/google-analytics-for-wordpress\/assets\/js\/frontend.min.js?ver=7.9.0",
+                        "https:\/\/ajax.googleapis.com\/ajax\/libs\/jquery\/2.2.4\/jquery.min.js?ver=2.2.4",
+                        "\/\/js.hs-scripts.com\/5951833.js?integration=WordPress",
                         "http:\/\/redcircle\/wp-content\/themes\/FoundationPress\/dist\/assets\/js\/app.js?ver=2.10.4",
                         "http:\/\/redcircle\/wp-includes\/js\/wp-embed.min.js?ver=5.2.2",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/lib\/smartmenus\/jquery.smartmenus.min.js?ver=1.0.1",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/js\/frontend-modules.min.js?ver=2.6.8",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/lib\/sticky\/jquery.sticky.min.js?ver=2.6.4",
-                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/js\/frontend.min.js?ver=2.6.4",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/js\/frontend-modules.min.js?ver=2.7.4",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/lib\/sticky\/jquery.sticky.min.js?ver=2.7.2",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/js\/frontend.min.js?ver=2.7.2",
                         "http:\/\/redcircle\/wp-includes\/js\/jquery\/ui\/position.min.js?ver=1.11.4",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/dialog\/dialog.min.js?ver=4.7.3",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/waypoints\/waypoints.min.js?ver=4.0.2",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/lib\/swiper\/swiper.min.js?ver=4.4.6",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/js\/frontend.min.js?ver=2.7.4",
+                        "http:\/\/redcircle\/wp-content\/plugins\/google-analytics-for-wordpress\/assets\/js\/frontend.min.js?ver=7.7.1",
+                        "https:\/\/ajax.googleapis.com\/ajax\/libs\/jquery\/3.4.1\/jquery.min.js?ver=3.4.1",
+                        "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/js\/jquery.themepunch.tools.min.js?ver=5.4.8.3",
+                        "http:\/\/redcircle\/wp-content\/plugins\/revslider\/public\/assets\/js\/jquery.themepunch.revolution.min.js?ver=5.4.8.3",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/js\/frontend-modules.min.js?ver=2.6.8",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/lib\/sticky\/jquery.sticky.min.js?ver=2.6.4",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/js\/frontend.min.js?ver=2.6.4",
                         "http:\/\/redcircle\/wp-content\/plugins\/elementor\/assets\/js\/frontend.min.js?ver=2.6.8"
+                    ]
+                }
+            },
+            "archive": {
+                "include": {
+                    "files": [
+                        "http:\/\/redcircle\/wp-includes\/js\/imagesloaded.min.js?ver=3.2.0"
+                    ]
+                }
+            },
+            "search": {
+                "include": {
+                    "files": [
+                        "http:\/\/redcircle\/wp-includes\/js\/imagesloaded.min.js?ver=3.2.0"
+                    ]
+                }
+            },
+            "single": {
+                "include": {
+                    "files": [
+                        "http:\/\/redcircle\/wp-includes\/js\/comment-reply.min.js?ver=5.2.2",
+                        "http:\/\/redcircle\/wp-content\/plugins\/elementor-pro\/assets\/lib\/social-share\/social-share.min.js?ver=0.2.17",
+                        "http:\/\/redcircle\/wp-includes\/js\/imagesloaded.min.js?ver=3.2.0",
+                        "http:\/\/redcircle\/wp-content\/plugins\/akismet\/_inc\/form.js?ver=4.1.2"
                     ]
                 }
             },
@@ -334,13 +440,6 @@
                 "include": {
                     "files": [
                         "http:\/\/redcircle\/wp-content\/plugins\/js_composer\/assets\/js\/dist\/js_composer_front.min.js?ver=6.0.1"
-                    ]
-                }
-            },
-            "single": {
-                "include": {
-                    "files": [
-                        "http:\/\/redcircle\/wp-includes\/js\/comment-reply.min.js?ver=5.2.2"
                     ]
                 }
             }
@@ -379,7 +478,7 @@
     "minify.htmltidy.options.clean": false,
     "minify.htmltidy.options.hide-comments": true,
     "minify.htmltidy.options.wrap": 0,
-    "minify.reject.logged": "0",
+    "minify.reject.logged": false,
     "minify.reject.ua": [
         ""
     ],
@@ -925,5 +1024,9 @@
     "plugin.type": "",
     "fragmentcache": {
         "engine": ""
+    },
+    "pgcache.bad_behavior_path": "",
+    "newrelic": {
+        "monitoring_type": "apm"
     }
 }

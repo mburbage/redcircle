@@ -22,8 +22,6 @@ class Module extends TagsModule {
 
 	const ARCHIVE_GROUP = 'archive';
 
-	const REQUEST_GROUP = 'request';
-
 	const MEDIA_GROUP = 'media';
 
 	const ACTION_GROUP = 'action';
@@ -85,6 +83,7 @@ class Module extends TagsModule {
 			'Shortcode',
 			'Contact_URL',
 			'User_Info',
+			'User_Profile_Picture',
 		];
 	}
 

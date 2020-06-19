@@ -1,0 +1,22 @@
+{
+    "name": "mac/konfirmi-plugin",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "konfirmi",
+            "email": "info@konfirmi.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "^2.0",
+        "steevanb/php-yaml": "^1.0",
+        "leafo/scssphp": "^0.7.5",
+        "symfony/yaml": "3.4.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "Konfirmi\\": "app/"
+        }
+    }
+}

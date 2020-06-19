@@ -1,6 +1,7 @@
 <?php
 namespace ElementorPro\Modules\AssetsManager\AssetTypes\Fonts;
 
+use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Files\CSS\Base;
 use ElementorPro\Modules\AssetsManager\Classes;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts_Manager;
@@ -197,7 +198,7 @@ class Custom_Fonts extends Classes\Font_Base {
 		 */
 		$svg_handler = Plugin::elementor()->assets_manager->get_asset( 'svg-handler' );
 
-		if ( $svg_handler::svg_sanitizer_can_run() && ! $svg_handler->sanitize_svg( $file['tmp_name'] ) ) {
+		if ( Files_Upload_Handler::file_sanitizer_can_run() && ! $svg_handler->sanitize_svg( $file['tmp_name'] ) ) {
 			$file['error'] = __( 'Invalid SVG Format, file not uploaded for security reasons', 'elementor-pro' );
 		}
 
@@ -224,6 +225,8 @@ class Custom_Fonts extends Classes\Font_Base {
 		if ( ! isset( $registered_file_types[ $filetype['ext'] ] ) ) {
 			return $data;
 		}
+		// Fix incorrect file mime type
+		$filetype['type'] = explode( '|', $filetype['type'] )[0];
 
 		return [
 			'ext' => $filetype['ext'],
@@ -266,6 +269,7 @@ class Custom_Fonts extends Classes\Font_Base {
 		$font_face .= "\tfont-family: '" . $font_family . "';" . PHP_EOL;
 		$font_face .= "\tfont-style: " . $data['font_style'] . ';' . PHP_EOL;
 		$font_face .= "\tfont-weight: " . $data['font_weight'] . ';' . PHP_EOL;
+		$font_face .= "\tfont-display: " . apply_filters( 'elementor_pro/custom_fonts/font_display', 'auto', $font_family, $data ) . ';' . PHP_EOL;
 
 		if ( isset( $data['eot'] ) && isset( $data['eot']['url'] ) && ! empty( $data['eot']['url'] ) ) {
 			$font_face .= "\tsrc: url('" . esc_attr( $data['eot']['url'] ) . "');" . PHP_EOL;

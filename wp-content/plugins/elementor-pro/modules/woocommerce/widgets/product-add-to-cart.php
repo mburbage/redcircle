@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Product_Add_To_Cart extends Widget_Base {
+class Product_Add_To_Cart extends Base_Widget {
 
 	public function get_name() {
 		return 'woocommerce-product-add-to-cart';
@@ -413,6 +413,21 @@ class Product_Add_To_Cart extends Widget_Base {
 			[
 				'label' => __( 'Variations', 'elementor-pro' ),
 				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'variations_width',
+			[
+				'label' => __( 'Width', 'elementor-pro' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ '%' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'selectors' => [
+					'.woocommerce {{WRAPPER}} form.cart .variations' => 'width: {{SIZE}}{{UNIT}}',
+				],
 			]
 		);
 

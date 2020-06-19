@@ -2,24 +2,25 @@
 namespace ElementorPro\Modules\Blockquote\Widgets;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Schemes;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Widget_Base;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
+use ElementorPro\Base\Base_Widget;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Blockquote extends Widget_Base {
+class Blockquote extends Base_Widget {
 
 	public function get_style_depends() {
 		if ( Icons_Manager::is_migration_allowed() ) {
 			return [ 'elementor-icons-fa-brands' ];
 		}
+
 		return [];
 	}
 
@@ -33,10 +34,6 @@ class Blockquote extends Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-blockquote';
-	}
-
-	public function get_categories() {
-		return [ 'pro-elements' ];
 	}
 
 	public function get_keywords() {
@@ -102,7 +99,7 @@ class Blockquote extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
-				'default' => __( 'Click edit button to change this text. Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ) . '. ' . __( 'Click edit button to change this text. Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ),
+				'default' => __( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor-pro' ) . __( 'Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ),
 				'placeholder' => __( 'Enter your quote', 'elementor-pro' ),
 				'rows' => 10,
 			]
@@ -117,7 +114,6 @@ class Blockquote extends Widget_Base {
 					'active' => true,
 				],
 				'default' => __( 'John Doe', 'elementor-pro' ),
-				'label_block' => false,
 				'separator' => 'after',
 			]
 		);
@@ -138,7 +134,6 @@ class Blockquote extends Widget_Base {
 			[
 				'label' => __( 'View', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
-				'label_block' => false,
 				'options' => [
 					'icon-text' => 'Icon & Text',
 					'icon' => 'Icon',
@@ -158,7 +153,6 @@ class Blockquote extends Widget_Base {
 			[
 				'label' => __( 'Skin', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
-				'label_block' => false,
 				'options' => [
 					'classic' => 'Classic',
 					'bubble' => 'Bubble',
@@ -178,7 +172,6 @@ class Blockquote extends Widget_Base {
 				'label' => __( 'Label', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => __( 'Tweet', 'elementor-pro' ),
-				'label_block' => false,
 				'condition' => [
 					'tweet_button' => 'yes',
 					'tweet_button_view!' => 'icon',
@@ -191,7 +184,6 @@ class Blockquote extends Widget_Base {
 			[
 				'label' => __( 'Username', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
-				'label_block' => false,
 				'placeholder' => '@username',
 				'condition' => [
 					'tweet_button' => 'yes',
@@ -253,8 +245,8 @@ class Blockquote extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_3,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_3,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote__content' => 'color: {{VALUE}}',
@@ -296,8 +288,8 @@ class Blockquote extends Widget_Base {
 				'label' => __( 'Text Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'scheme' => [
-					'type' => Scheme_Color::get_type(),
-					'value' => Scheme_Color::COLOR_2,
+					'type' => Schemes\Color::get_type(),
+					'value' => Schemes\Color::COLOR_2,
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote__author' => 'color: {{VALUE}}',
@@ -444,9 +436,6 @@ class Blockquote extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote__tweet-button' => 'color: {{VALUE}}',
 				],
-				'condition' => [
-					'button_color_source' => 'custom',
-				],
 			]
 		);
 
@@ -488,9 +477,6 @@ class Blockquote extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-blockquote__tweet-button:hover' => 'color: {{VALUE}}',
-				],
-				'condition' => [
-					'button_color_source' => 'custom',
 				],
 			]
 		);
@@ -888,7 +874,15 @@ class Blockquote extends Widget_Base {
 		<?php
 	}
 
-	protected function _content_template() {
+	/**
+	 * Render Blockquote widget output in the editor.
+	 *
+	 * Written as a Backbone JavaScript template and used to generate the live preview.
+	 *
+	 * @since 2.9.0
+	 * @access protected
+	 */
+	protected function content_template() {
 		?>
 		<#
 			var tweetButtonView = settings.tweet_button_view;
@@ -904,8 +898,16 @@ class Blockquote extends Widget_Base {
 						<# } #>
 						<# if ( 'yes' === settings.tweet_button ) { #>
 							<a href="#" class="elementor-blockquote__tweet-button">
-								<# if ( 'text' !== tweetButtonView ) { #>
-									<i class="fa fa-twitter" aria-hidden="true"></i><span class="elementor-screen-only"><?php esc_html_e( 'Tweet', 'elementor-pro' ); ?></span>
+								<# if ( 'text' !== tweetButtonView ) {
+									// If FontAwesome migration has been done, load the FA5 version, otherwise load FA4
+									if ( ! elementor.config.icons_update_needed ) { #>
+										<i class="fab fa-twitter" aria-hidden="true"></i>
+									<# } else { #>
+										<i class="fa fa-twitter" aria-hidden="true"></i>
+									<# } #>
+									<# if ( 'icon-text' !== tweetButtonView ) { #>
+										<span class="elementor-screen-only"><?php esc_html_e( 'Tweet', 'elementor-pro' ); ?></span>
+									<# } #>
 								<# } #>
 								<# if ( 'icon-text' === tweetButtonView || 'text' === tweetButtonView ) { #>
 									<span class="elementor-inline-editing elementor-blockquote__tweet-label" data-elementor-setting-key="tweet_button_label" data-elementor-inline-editing-toolbar="none">{{{ settings.tweet_button_label }}}</span>

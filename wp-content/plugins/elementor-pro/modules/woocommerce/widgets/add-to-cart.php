@@ -3,6 +3,7 @@ namespace ElementorPro\Modules\Woocommerce\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Widget_Button;
+use ElementorPro\Base\Base_Widget_Trait;
 use ElementorPro\Modules\QueryControl\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Add_To_Cart extends Widget_Button {
+
+	use Base_Widget_Trait;
 
 	public function get_name() {
 		return 'wc-add-to-cart';
@@ -72,6 +75,7 @@ class Add_To_Cart extends Widget_Button {
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => __( 'Hide', 'elementor-pro' ),
 				'label_on' => __( 'Show', 'elementor-pro' ),
+				'description' => __( 'Please note that switching on this option will disable some of the design controls.', 'elementor-pro' ),
 			]
 		);
 
@@ -120,9 +124,11 @@ class Add_To_Cart extends Widget_Button {
 		);
 
 		$this->update_control(
-			'background_color',
+			'size',
 			[
-				'default' => '#61ce70',
+				'condition' => [
+					'show_quantity' => '',
+				],
 			]
 		);
 	}
@@ -214,6 +220,12 @@ class Add_To_Cart extends Widget_Button {
 		remove_filter( 'esc_html', [ $this, 'unescape_html' ] );
 	}
 
+	/**
+	 * Written as a Backbone JavaScript template and used to generate the live preview.
+	 *
+	 * @since 2.9.0
+	 * @access protected
+	 */
 	// Force remote render
-	protected function _content_template() {}
+	protected function content_template() {}
 }
